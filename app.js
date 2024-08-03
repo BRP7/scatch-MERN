@@ -9,6 +9,11 @@ app.get('/', (req, res) => {
   res.send('Hello, World!');
 });
 
+app.get('/user/register', (req, res) => {
+  const { name , phoneNumber , address , email , password } = req.body ;
+  
+});
+
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
 });
