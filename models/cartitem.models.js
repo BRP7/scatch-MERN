@@ -1,4 +1,4 @@
-const reviewSchema = mongoose.Schema({
+const cartItemSchema = mongoose.Schema({
     user: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
@@ -9,22 +9,15 @@ const reviewSchema = mongoose.Schema({
         ref: 'Product',
         required: true
     },
-    rating: {
+    quantity: {
         type: Number,
         required: true,
-        min: 1,
-        max: 5
+        min: 1
     },
-    comment: {
-        type: String,
-        required: true
-    },
-    images: [String],
-    videos: [String],
     createdAt: {
         type: Date,
         default: Date.now
     }
 });
 
-module.exports = mongoose.model('Review', reviewSchema);
+module.exports = mongoose.model('CartItem', cartItemSchema);

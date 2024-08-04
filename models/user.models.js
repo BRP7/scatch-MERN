@@ -77,19 +77,16 @@ const userSchema = mongoose.Schema({
     }
 });
 
-// Ensure `updatedAt` is updated on save
 userSchema.pre('save', function(next) {
     this.updatedAt = Date.now();
     next();
 });
 
-// Method to enable 2FA
 userSchema.methods.enableTwoFactor = async function() {
     const secret = speakeasy.generateSecret();
     this.twoFactorSecret = secret.base32;
     this.isTwoFactorEnabled = true;
 
-    // Generate QR code
     const qrCodeUrl = speakeasy.otpauthURL({
         secret: secret.ascii,
         label: 'YourAppName',
@@ -97,13 +94,12 @@ userSchema.methods.enableTwoFactor = async function() {
     });
     try {
         const qrCodeDataUrl = await qrcode.toDataURL(qrCodeUrl);
-        return { qrCodeDataUrl, secret: secret.base32 }; // Return QR code data URL for display
+        return { qrCodeDataUrl, secret: secret.base32 }; 
     } catch (err) {
         throw new Error('Error generating QR code');
     }
 };
 
-// Method to verify 2FA code
 userSchema.methods.verifyTwoFactor = function(token) {
     return speakeasy.totp.verify({
         secret: this.twoFactorSecret,
