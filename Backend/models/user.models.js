@@ -122,8 +122,6 @@ userSchema.methods.verifyTwoFactor = function(token) {
 };
 
 userSchema.methods.comparePassword = async function (password) {
-    console.log(this.email);
-    console.log(1234);
     return await bcrypt.compare(password, this.password);
 };
 
