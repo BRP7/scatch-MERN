@@ -6,12 +6,14 @@ import userRoutes from './routes/user.routes.js';
 import productRoutes from './routes/product.routes.js';
 import connectDB from './db/connectDB.js';
 import dotenv from 'dotenv';
+import cookieParser from 'cookie-parser';
 
 dotenv.config();
 
 const app = express();
 
 app.use(bodyParser.json());
+app.use(cookieParser());
 app.use(corsMiddleware); // Use CORS middleware here
 
 connectDB();
