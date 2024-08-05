@@ -1,5 +1,4 @@
 import User from '../models/user.models.js';
-import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 
 export const register = async (req, res) => {
@@ -10,16 +9,20 @@ export const register = async (req, res) => {
             return res.status(400).json({ message: 'Missing required fields' });
         }
 
+        if (password.length < 6) {
+            return res.status(400).json({ message: 'Password must be at least 6 characters long' });
+          }      
+
         const existingUser = await User.findOne({ email });
         if (existingUser) {
             return res.status(400).json({ message: 'User already exists' });
         }
 
-        // const hashedPassword = await bcrypt.hash(password, 10);
+        // const hashedPassword = await bcrypt.hash(password, 10); //hashing password in pre middleware so don't do it here
 
         const user = new User({ name, email, password, phoneNumber, address });
         await user.save();
-
+        const token = jwt.sign({ id: user._id }, process.env.JSON_SECRET, { expiresIn: '5h' });
         res.status(201).json({ message: 'User registered successfully' });
     } catch (error) {
         console.error('Registration error:', error);
@@ -34,16 +37,13 @@ export const login = async (req, res) => {
         const user = await User.findOne({ email });
         
         if (!user) return res.status(400).json({ message: 'Invalid credentials' });
-    //     console.log(user);
-    //    const isMatch = await bcrypt.compare('ABCD', user.password)
-    //     console.log(isMatch);
 
         const isMatch = await user.comparePassword(password);
 
         if (!isMatch) return res.status(400).json({ message: 'Invalid credentials' });
 
         // Generate JWT token and send response
-        const token = jwt.sign({ id: user._id }, 'your_jwt_secret', { expiresIn: '1h' });
+        const token = jwt.sign({ id: user._id }, process.env.JSON_SECRET, { expiresIn: '1h' });
         res.json({ message: 'Login successful', token });
     } catch (error) {
         console.log(error);
