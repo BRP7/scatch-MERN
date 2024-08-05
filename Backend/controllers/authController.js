@@ -39,6 +39,7 @@ export const register = async (req, res) => {
 };
 
 
+
 export const login = async (req, res) => {
     try {
         const { email, password } = req.body;
@@ -52,15 +53,7 @@ export const login = async (req, res) => {
 
         // Generate JWT token and send response
         const token = jwt.sign({ id: user._id }, process.env.JSON_SECRET, { expiresIn: '1h' });
-        
-        // Set token as cookie
-        res.cookie('token', token, {
-            httpOnly: true,
-            secure: process.env.NODE_ENV === 'production', // set to true in production
-            maxAge: 5 * 60 * 60 * 1000, 
-        });
-
-        res.json({ message: 'Login successful' });
+        res.json({ message: 'Login successful', token });
     } catch (error) {
         console.log(error);
         res.status(500).json({ message: 'Server error' });
