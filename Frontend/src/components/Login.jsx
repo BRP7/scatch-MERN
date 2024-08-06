@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const Login = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -13,18 +15,21 @@ const Login = () => {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({ email, password }),
-                credentials: 'include' // Include credentials if needed
+                credentials: 'include' // Include credentials to send cookies
             });
-    
+
             if (!response.ok) {
                 throw new Error('Network response was not ok');
             }
-    
+
             const data = await response.json();
             if (data.message === 'Login successful') {
-                localStorage.setItem('token', data.token); // Assuming token is returned
+                console.log('Login successful:', data);
+                localStorage.setItem('token', data.token); // Optional, if you also want to store it in localStorage
                 alert('Login successful');
+                navigate('/profile'); // Redirect to profile page after successful login
             } else {
+                console.log('Login failed:', data);
                 alert('Login failed');
             }
         } catch (error) {
@@ -32,8 +37,6 @@ const Login = () => {
             alert('An error occurred');
         }
     };
-    
-    
 
     return (
         <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
