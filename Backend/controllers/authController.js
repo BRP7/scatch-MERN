@@ -18,17 +18,16 @@ export const register = async (req, res) => {
             return res.status(400).json({ message: 'User already exists' });
         }
 
-        // const hashedPassword = await bcrypt.hash(password, 10); // hashing password in pre middleware so don't do it here
-
         const user = new User({ name, email, password, phoneNumber, address });
         await user.save();
-        const token = jwt.sign({ id: user._id }, process.env.JSON_SECRET, { expiresIn: '5h' });
         
+        const token = jwt.sign({ id: user._id }, process.env.JSON_SECRET, { expiresIn: '5h' });
+
         // Set token as cookie
         res.cookie('token', token, {
-            httpOnly: true, // ensures the cookie is not accessible via JavaScript on the client-side
-            secure: process.env.NODE_ENV === 'production', // set to true in production
-            maxAge: 5 * 60 * 60 * 1000, // 5 hours
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            maxAge: 5 * 60 * 60 * 1000,
         });
 
         res.status(201).json({ message: 'User registered successfully' });
@@ -37,8 +36,6 @@ export const register = async (req, res) => {
         res.status(500).json({ message: 'Registration failed' });
     }
 };
-
-
 
 export const login = async (req, res) => {
     try {
@@ -51,14 +48,22 @@ export const login = async (req, res) => {
 
         if (!isMatch) return res.status(400).json({ message: 'Invalid credentials' });
 
-        // Generate JWT token and send response
         const token = jwt.sign({ id: user._id }, process.env.JSON_SECRET, { expiresIn: '1h' });
+
+        // Set token as cookie
+        res.cookie('token', token, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            maxAge: 1 * 60 * 60 * 1000,
+        });
+
         res.json({ message: 'Login successful', token });
     } catch (error) {
         console.log(error);
         res.status(500).json({ message: 'Server error' });
     }
 };
+
 
 
 export const logout = (req, res) => {
