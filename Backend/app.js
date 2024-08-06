@@ -18,6 +18,10 @@ app.use(corsMiddleware); // Use CORS middleware here
 
 connectDB();
 
+app.get('/check-cookies', (req, res) => {
+    res.json({ cookies: req.cookies });
+});
+
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
