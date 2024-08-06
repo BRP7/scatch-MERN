@@ -1,14 +1,17 @@
 import express from 'express';
-import { getUser } from '../controllers/userController.js';
+// import { getUser } from '../controllers/userController.js';
 import { adminMiddleware, customerMiddleware } from '../middlewares/roleMiddleware.js';
 import { authenticate } from '../middlewares/authMiddleware.js';
 import User from '../models/user.models.js';
+import profile from '../controllers/profileController.js';
+import { getProfile } from '../controllers/userController.js';
+
 
 const router = express.Router();
 
-router.get('/:id', getUser);
-router.get('/admin/:id', adminMiddleware, getUser);
-router.get('/customer/:id', customerMiddleware, getUser);
+// router.get('/:id', getUser);
+// router.get('/admin/:id', adminMiddleware, getUser);
+// router.get('/customer/:id', customerMiddleware, getUser);
 
 router.post('/enable-2fa', authenticate, async (req, res) => {
     const user = await User.findById(req.user.id);
@@ -38,19 +41,8 @@ router.post('/verify-2fa', authenticate, async (req, res) => {
     }
 });
 
-router.get('/profile', authenticate, async (req, res) => {
-    console.log(req.user);
-    try {
-        const user = await User.findById(req.user.id).select('-password'); 
-        if (!user) {
-            return res.status(404).json({ message: 'User not found' });
-        }
-        res.json({ user });
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: 'Server error' });
-    }
-});
+// router.get('/profile', authenticate,profile);
+router.get('/profile', authenticate, getProfile);
 
 router.get('/orders', authenticate, async (req, res) => {
     try {

@@ -1,10 +1,10 @@
 import express from 'express';
 import jwt from 'jsonwebtoken';
-import User from '../models/User.js';
+import User from '../models/user.models.js';
 
 const router = express.Router();
 
-router.get('/profile', async (req, res) => {
+const profile = async (req, res) => {
     try {
         const token = req.cookies.token;
 
@@ -24,6 +24,6 @@ router.get('/profile', async (req, res) => {
         console.error('Error fetching profile:', error);
         res.status(500).json({ message: 'Server error' });
     }
-});
+};
 
-export default router;
+export default profile;
