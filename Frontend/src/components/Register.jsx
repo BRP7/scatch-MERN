@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom'; // Ensure this is correctly imported
 
 const Register = () => {
+    const navigate = useNavigate(); // Initialize navigate
+
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -36,9 +39,11 @@ const Register = () => {
 
             const data = await response.json();
             console.log('Registration successful:', data);
-            navigate('/profile'); 
+            // Redirect to the profile page
+            navigate('/profile');
         } catch (error) {
             console.error('Registration error:', error.message);
+            alert('Registration failed: ' + error.message);
         }
     };
 

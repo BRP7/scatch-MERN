@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const Profile = () => {
   const [user, setUser] = useState(null);
-  const [editMode, setEditMode] = useState(false); // State to toggle edit mode
+  const [editMode, setEditMode] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
     phoneNumber: "",
@@ -17,13 +18,15 @@ const Profile = () => {
     },
   });
 
+  const navigate = useNavigate();
+
   useEffect(() => {
     const fetchUserData = async () => {
       try {
         const response = await axios.get(
           "http://localhost:5000/api/users/profile",
           {
-            withCredentials: true, // Ensures credentials (cookies) are sent with the request
+            withCredentials: true,
           }
         );
 
@@ -36,11 +39,10 @@ const Profile = () => {
           name: response.data.name,
           phoneNumber: response.data.phoneNumber,
           email: response.data.email,
-          address: response.data.address || {}, // Handle if address is null
+          address: response.data.address || {},
         });
       } catch (error) {
         console.error("Error fetching user data:", error);
-        // Handle error, such as redirecting to login page
       }
     };
 
@@ -80,18 +82,27 @@ const Profile = () => {
       );
 
       if (response.status === 200) {
-        setUser(response.data); // Update user state with updated data
-        setEditMode(false); // Exit edit mode
+        setUser(response.data);
+        setEditMode(false);
         console.log("Profile updated successfully");
       }
     } catch (error) {
       console.error("Error updating profile:", error);
-      // Handle error
     }
   };
 
-  const handleLogout = () => {
-    // Add your logout logic here
+  const handleLogout = async () => {
+    try {
+      await axios.post("http://localhost:5000/api/auth/logout", {}, {
+        withCredentials: true, // Ensure the cookie is sent with the request
+      });
+      // Redirect to login page or homepage after successful logout
+      navigate('/login');
+    } catch (error) {
+      console.error("Error logging out:", error);
+      // Handle error, such as showing an alert
+      alert("Logout failed. Please try again.");
+    }
   };
 
   if (!user) {
@@ -105,7 +116,6 @@ const Profile = () => {
     );
   }
 
-  // Combine address fields into a single line if available
   const addressLine = user.address
     ? `${user.address.street || ""}, ${user.address.city || ""}, ${
         user.address.state || ""
