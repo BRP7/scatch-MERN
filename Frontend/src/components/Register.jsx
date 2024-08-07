@@ -36,7 +36,7 @@ const Register = () => {
 
             const data = await response.json();
             console.log('Registration successful:', data);
-            // Optionally, redirect to login page or handle success message
+            navigate('/profile'); 
         } catch (error) {
             console.error('Registration error:', error.message);
         }
