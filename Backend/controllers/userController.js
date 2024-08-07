@@ -12,10 +12,8 @@ import User from '../models/user.models.js';
 
 
 export const getProfile = async (req, res) => {
-    console.log("id",req.user.id);
   try {
     const user = await User.findById(req.user.id).select('-password');
-    console.log('User retrieved:', user);
 
     if (!user) return res.status(404).json({ msg: 'User not found' });
 

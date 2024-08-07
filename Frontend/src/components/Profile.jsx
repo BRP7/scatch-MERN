@@ -34,6 +34,10 @@ const Profile = () => {
     fetchUserData();
   }, [navigate]);
 
+  // Log user when it is updated
+  useEffect(() => {
+    console.log("Updated user:", user);
+  }, [user]);
 
   if (!user) return <div>Loading...</div>;
 
