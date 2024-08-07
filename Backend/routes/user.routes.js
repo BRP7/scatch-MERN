@@ -4,7 +4,7 @@ import { adminMiddleware, customerMiddleware } from '../middlewares/roleMiddlewa
 import { authenticate } from '../middlewares/authMiddleware.js';
 import User from '../models/user.models.js';
 import profile from '../controllers/profileController.js';
-import { getProfile } from '../controllers/userController.js';
+import { getProfile , updateProfile } from '../controllers/userController.js';
 
 
 const router = express.Router();
@@ -43,6 +43,7 @@ router.post('/verify-2fa', authenticate, async (req, res) => {
 
 // router.get('/profile', authenticate,profile);
 router.get('/profile', authenticate, getProfile);
+router.put('/profile', authenticate, updateProfile);
 
 router.get('/orders', authenticate, async (req, res) => {
     try {

@@ -1,114 +1,267 @@
-import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 
 const Profile = () => {
-  const [user, setUser] = useState(null);
-  const navigate = useNavigate();
+    const [user, setUser] = useState(null);
+    const [editMode, setEditMode] = useState(false); // State to toggle edit mode
+    const [formData, setFormData] = useState({
+        name: '',
+        phoneNumber: '',
+        email: '',
+        address: {
+            street: '',
+            city: '',
+            state: '',
+            country: '',
+            zipCode: '',
+        },
+    });
 
-  useEffect(() => {
-    const fetchUserData = async () => {
-      try {
-        const response = await fetch(
-          "http://localhost:5000/api/users/profile",
-          {
-            method: "GET",
-            credentials: "include", // Sends cookies with the request
-            headers: {
-              "Content-Type": "application/json",
-            },
-          }
-        );
+    useEffect(() => {
+        const fetchUserData = async () => {
+            try {
+                const response = await axios.get('http://localhost:5000/api/users/profile', {
+                    withCredentials: true, // Ensures credentials (cookies) are sent with the request
+                });
 
-        if (!response.ok) {
-          throw new Error("Network response was not ok");
+                if (!response.data) {
+                    throw new Error('User data not found');
+                }
+
+                setUser(response.data);
+                setFormData({
+                    name: response.data.name,
+                    phoneNumber: response.data.phoneNumber,
+                    email: response.data.email,
+                    address: response.data.address || {}, // Handle if address is null
+                });
+            } catch (error) {
+                console.error('Error fetching user data:', error);
+                // Handle error, such as redirecting to login page
+            }
+        };
+
+        fetchUserData();
+    }, []);
+
+    const handleInputChange = (e) => {
+        const { name, value } = e.target;
+        if (name.startsWith('address.')) {
+            setFormData({
+                ...formData,
+                address: {
+                    ...formData.address,
+                    [name.split('.')[1]]: value,
+                },
+            });
+        } else {
+            setFormData({
+                ...formData,
+                [name]: value,
+            });
         }
-
-        const data = await response.json();
-        setUser(data);
-      } catch (error) {
-        console.error("Error fetching user data:", error);
-        navigate("/login");
-      }
     };
 
-    fetchUserData();
-  }, [navigate]);
+    const toggleEditMode = () => {
+        setEditMode(!editMode);
+    };
 
-  useEffect(() => {
-    console.log("Updated user:", user);
-  }, [user]);
+    const handleSave = async () => {
+        try {
+            const response = await axios.put('http://localhost:5000/api/users/profile', formData, {
+                withCredentials: true,
+            });
 
-  if (!user) {
+            if (response.status === 200) {
+                setUser(response.data); // Update user state with updated data
+                setEditMode(false); // Exit edit mode
+                console.log('Profile updated successfully');
+            }
+        } catch (error) {
+            console.error('Error updating profile:', error);
+            // Handle error
+        }
+    };
+
+    const handleLogout = () => {
+        // Add your logout logic here
+    };
+
+    if (!user) {
+        return <div>Loading...</div>;
+    }
+
+    // Combine address fields into a single line if available
+    const addressLine = user.address ? 
+        `${user.address.street || ''}, ${user.address.city || ''}, ${user.address.state || ''}, ${user.address.country || ''} ${user.address.zipCode || ''}`
+        : '';
+
+    const displayAddress = addressLine.trim() || 'Not provided';
+
     return (
-      <div className="flex items-center justify-center h-screen">
-        <div className="animate-spin rounded-full h-20 w-20 border-t-2 border-b-2 border-gray-900"></div>
-        <div className="ml-4 text-gray-900 text-2xl font-semibold">
-          Loading...
+        <div className="max-w-4xl mx-auto px-4 py-8">
+            <div className="flex items-center justify-between mb-8">
+                <div className="flex items-center">
+                    <div className="rounded-full h-16 w-16 bg-gray-300 flex items-center justify-center">
+                        <span className="text-xl font-semibold text-gray-600">{user.name.charAt(0)}</span>
+                    </div>
+                    <div className="ml-4">
+                        <h2 className="text-2xl font-bold text-gray-800">{user.name}</h2>
+                        <p className="text-gray-600">{user.email}</p>
+                    </div>
+                </div>
+                <div className="flex space-x-4">
+                    <button
+                        className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg"
+                        onClick={handleLogout}
+                    >
+                        Logout
+                    </button>
+                </div>
+            </div>
+
+            <div className="bg-white rounded-lg shadow-md p-6 mb-8">
+                <h3 className="text-xl font-bold text-gray-800 mb-4">Your Details</h3>
+                {editMode ? (
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label className="text-gray-600 mb-2 block">
+                                Name:
+                                <input
+                                    type="text"
+                                    name="name"
+                                    value={formData.name}
+                                    onChange={handleInputChange}
+                                    className="border-b border-gray-300 px-3 py-2 rounded-md w-full mt-1 focus:outline-none focus:border-blue-500"
+                                />
+                            </label>
+                            <label className="text-gray-600 mb-2 block">
+                                Phone Number:
+                                <input
+                                    type="text"
+                                    name="phoneNumber"
+                                    value={formData.phoneNumber}
+                                    onChange={handleInputChange}
+                                    className="border-b border-gray-300 px-3 py-2 rounded-md w-full mt-1 focus:outline-none focus:border-blue-500"
+                                />
+                            </label>
+                        </div>
+                        <div>
+                            <label className="text-gray-600 mb-2 block">
+                                Email:
+                                <input
+                                    type="email"
+                                    name="email"
+                                    value={formData.email}
+                                    onChange={handleInputChange}
+                                    className="border-b border-gray-300 px-3 py-2 rounded-md w-full mt-1 focus:outline-none focus:border-blue-500"
+                                />
+                            </label>
+                            <label className="text-gray-600 mb-2 block">
+                                Street:
+                                <input
+                                    type="text"
+                                    name="address.street"
+                                    value={formData.address.street}
+                                    onChange={handleInputChange}
+                                    className="border-b border-gray-300 px-3 py-2 rounded-md w-full mt-1 focus:outline-none focus:border-blue-500"
+                                />
+                            </label>
+                            <label className="text-gray-600 mb-2 block">
+                                City:
+                                <input
+                                    type="text"
+                                    name="address.city"
+                                    value={formData.address.city}
+                                    onChange={handleInputChange}
+                                    className="border-b border-gray-300 px-3 py-2 rounded-md w-full mt-1 focus:outline-none focus:border-blue-500"
+                                />
+                            </label>
+                            <label className="text-gray-600 mb-2 block">
+                                State:
+                                <input
+                                    type="text"
+                                    name="address.state"
+                                    value={formData.address.state}
+                                    onChange={handleInputChange}
+                                    className="border-b border-gray-300 px-3 py-2 rounded-md w-full mt-1 focus:outline-none focus:border-blue-500"
+                                />
+                            </label>
+                            <label className="text-gray-600 mb-2 block">
+                                Country:
+                                <input
+                                    type="text"
+                                    name="address.country"
+                                    value={formData.address.country}
+                                    onChange={handleInputChange}
+                                    className="border-b border-gray-300 px-3 py-2 rounded-md w-full mt-1 focus:outline-none focus:border-blue-500"
+                                />
+                            </label>
+                            <label className="text-gray-600 mb-2 block">
+                                Zip Code:
+                                <input
+                                    type="text"
+                                    name="address.zipCode"
+                                    value={formData.address.zipCode}
+                                    onChange={handleInputChange}
+                                    className="border-b border-gray-300 px-3 py-2 rounded-md w-full mt-1 focus:outline-none focus:border-blue-500"
+                                />
+                            </label>
+                        </div>
+                    </div>
+                ) : (
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <p className="text-gray-600 mb-2">
+                                <span className="font-semibold">Name:</span> {user.name}
+                            </p>
+                            <p className="text-gray-600 mb-2">
+                                <span className="font-semibold">Phone:</span> {user.phoneNumber}
+                            </p>
+                        </div>
+                        <div>
+                            <p className="text-gray-600 mb-2">
+                                <span className="font-semibold">Email:</span> {user.email}
+                            </p>
+                            <p className="text-gray-600 mb-2">
+                                <span className="font-semibold">Address:</span> {displayAddress}
+                            </p>
+                        </div>
+                    </div>
+                )}
+            </div>
+
+            <div className="flex justify-end">
+                {editMode ? (
+                    <button
+                        onClick={handleSave}
+                        className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg"
+                    >
+                        Save
+                    </button>
+                ) : (
+                    <button
+                        onClick={toggleEditMode}
+                        className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg"
+                    >
+                        Edit
+                    </button>
+                )}
+            </div>
+
+            <div className="bg-white rounded-lg shadow-md p-6 mt-8">
+                <h3 className="text-xl font-bold text-gray-800 mb-4">Order History</h3>
+                <div className="space-y-4">
+                    <div className="border border-gray-200 p-4 rounded-lg shadow-sm">
+                        <p className="text-gray-800 font-semibold">Order #12345</p>
+                        <p className="text-gray-600">Date: July 20, 2024</p>
+                        <p className="text-gray-600">Total: $120.00</p>
+                        <p className="text-green-600 font-semibold">Status: Delivered</p>
+                    </div>
+                </div>
+            </div>
         </div>
-      </div>
     );
-  }
-
-  return (
-    <div className="max-w-4xl mx-auto px-4 py-8">
-      <div className="flex items-center justify-between mb-8">
-        <div className="flex items-center">
-          <div className="rounded-full h-16 w-16 bg-gray-300 flex items-center justify-center">
-            <span className="text-xl font-semibold text-gray-600">
-              {user.name.charAt(0)}
-            </span>
-          </div>
-          <div className="ml-4">
-            <h2 className="text-2xl font-bold text-gray-800">{user.name}</h2>
-            <p className="text-gray-600">{user.email}</p>
-          </div>
-        </div>
-        <button className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg">
-          Logout
-        </button>
-      </div>
-
-      <div className="bg-white rounded-lg shadow-md p-6 mb-8">
-        <h3 className="text-xl font-bold text-gray-800 mb-4">Your Details</h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <p className="text-gray-600 mb-2">
-              <span className="font-semibold">Name:</span> {user.name}
-            </p>
-            <p className="text-gray-600 mb-2">
-              <span className="font-semibold">Phone:</span> {user.phoneNumber}
-            </p>
-          </div>
-          <div>
-            <p className="text-gray-600 mb-2">
-              <span className="font-semibold">Email:</span> {user.email}
-            </p>
-            {user.address && (
-              <p className="text-gray-600 mb-2">
-                <span className="font-semibold">Address:</span>
-                {user.address.street}, {user.address.city}, {user.address.state}
-                , {user.address.country}, {user.address.zipCode}
-              </p>
-            )}
-          </div>
-        </div>
-        <button className="mt-4 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg">
-          Edit Details
-        </button>
-      </div>
-      <div className="bg-white rounded-lg shadow-md p-6">
-        <h3 className="text-xl font-bold text-gray-800 mb-4">Order History</h3>
-        <div className="space-y-4">
-          <div className="border border-gray-200 p-4 rounded-lg shadow-sm">
-            <p className="text-gray-800 font-semibold">Order #12345</p>
-            <p className="text-gray-600">Date: July 20, 2024</p>
-            <p className="text-gray-600">Total: $120.00</p>
-            <p className="text-green-600 font-semibold">Status: Delivered</p>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
 };
 
 export default Profile;

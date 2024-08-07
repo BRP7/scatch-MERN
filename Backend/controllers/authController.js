@@ -5,7 +5,7 @@ export const register = async (req, res) => {
     try {
         const { name, email, password, phoneNumber, address } = req.body;
 
-        if (!name || !email || !password) {
+        if (!name || !email || !password || !phoneNumber) {
             return res.status(400).json({ message: 'Missing required fields' });
         }
 
@@ -23,7 +23,6 @@ export const register = async (req, res) => {
         
         const token = jwt.sign({ id: user._id }, process.env.JSON_SECRET, { expiresIn: '5h' });
 
-        // Set token as cookie
         res.cookie('token', token, {
             httpOnly: true,
             secure: process.env.NODE_ENV === 'production',

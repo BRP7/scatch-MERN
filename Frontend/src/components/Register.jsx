@@ -5,7 +5,13 @@ const Register = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [phoneNumber, setPhoneNumber] = useState('');
-    const [address, setAddress] = useState('');
+    const [address, setAddress] = useState({
+        street: '',
+        city: '',
+        state: '',
+        country: '',
+        zipCode: ''
+    });
 
     const handleSubmit = async (event) => {
         event.preventDefault();
@@ -25,6 +31,7 @@ const Register = () => {
 
             const data = await response.json();
             console.log('Registration successful:', data);
+            // Optionally, redirect to login page or handle success message
         } catch (error) {
             console.error('Registration error:', error.message);
         }
@@ -61,10 +68,34 @@ const Register = () => {
                                 placeholder="Phone Number" value={phoneNumber} onChange={(e) => setPhoneNumber(e.target.value)} />
                         </div>
                         <div>
-                            <label htmlFor="address" className="sr-only">Address</label>
-                            <input id="address" name="address" type="text" required
+                            <label htmlFor="street" className="sr-only">Street</label>
+                            <input id="street" name="street" type="text" required
                                 className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-                                placeholder="Address" value={address} onChange={(e) => setAddress(e.target.value)} />
+                                placeholder="Street" value={address.street} onChange={(e) => setAddress({ ...address, street: e.target.value })} />
+                        </div>
+                        <div>
+                            <label htmlFor="city" className="sr-only">City</label>
+                            <input id="city" name="city" type="text" required
+                                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+                                placeholder="City" value={address.city} onChange={(e) => setAddress({ ...address, city: e.target.value })} />
+                        </div>
+                        <div>
+                            <label htmlFor="state" className="sr-only">State</label>
+                            <input id="state" name="state" type="text" required
+                                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+                                placeholder="State" value={address.state} onChange={(e) => setAddress({ ...address, state: e.target.value })} />
+                        </div>
+                        <div>
+                            <label htmlFor="country" className="sr-only">Country</label>
+                            <input id="country" name="country" type="text" required
+                                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+                                placeholder="Country" value={address.country} onChange={(e) => setAddress({ ...address, country: e.target.value })} />
+                        </div>
+                        <div>
+                            <label htmlFor="zip-code" className="sr-only">ZIP Code</label>
+                            <input id="zip-code" name="zipCode" type="text" required
+                                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+                                placeholder="ZIP Code" value={address.zipCode} onChange={(e) => setAddress({ ...address, zipCode: e.target.value })} />
                         </div>
                     </div>
                     <div>
