@@ -1,19 +1,24 @@
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import Profile from './components/Profile';
 import Login from './components/Login';
 import Register from './components/Register';
-import ProfilePage from './components/Profile';
+import ThemeSwitcher from './components/ThemeSwiter';
+import './index.css';
 
-function App() {
+const App = () => {
     return (
         <Router>
-            <Routes>
-                <Route path="/login" element={<Login />} />
-                <Route path="/register" element={<Register />} />
-                <Route path="/profile" element={<ProfilePage />} />
-            </Routes>
+            <div className="App">
+                <ThemeSwitcher />
+                <Routes>
+                    <Route path="/profile" element={<Profile />} />
+                    <Route path="/login" element={<Login />} />
+                    <Route path="/register" element={<Register />} />
+                </Routes>
+            </div>
         </Router>
     );
-}
+};
 
 export default App;

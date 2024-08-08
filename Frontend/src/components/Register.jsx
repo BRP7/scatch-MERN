@@ -1,110 +1,117 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom'; // Ensure this is correctly imported
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 const Register = () => {
-    const navigate = useNavigate(); // Initialize navigate
-
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
     const [phoneNumber, setPhoneNumber] = useState('');
-    const [address, setAddress] = useState({
-        street: '',
-        city: '',
-        state: '',
-        country: '',
-        zipCode: ''
-    });
+    const [password, setPassword] = useState('');
+    const [confirmPassword, setConfirmPassword] = useState('');
+    const [error, setError] = useState('');
+    const navigate = useNavigate();
 
-    const handleSubmit = async (event) => {
-        event.preventDefault();
+    const handleRegister = async (e) => {
+        e.preventDefault();
+
+        if (password !== confirmPassword) {
+            setError('Passwords do not match');
+            return;
+        }
+
         try {
-            if (!name || !email || !password || !phoneNumber) {
-                alert('Please fill out all required fields.');
-                return;
-            }
-
-            const response = await fetch('http://localhost:5000/api/auth/register', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ name, email, password, phoneNumber, address }),
+            const response = await axios.post('http://localhost:5000/api/auth/register', {
+                name,
+                email,
+                phoneNumber,
+                password,
             });
 
-            if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.message || 'Network response was not ok.');
+            if (response.status === 201) {
+                navigate('/login');
             }
-
-            const data = await response.json();
-            console.log('Registration successful:', data);
-            // Redirect to the profile page
-            navigate('/profile');
         } catch (error) {
-            console.error('Registration error:', error.message);
-            alert('Registration failed: ' + error.message);
+            setError('Registration failed. Please try again.');
         }
     };
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-            <div className="max-w-md w-full bg-white shadow-md rounded-lg p-8 space-y-8">
-                <h2 className="text-2xl font-semibold text-gray-900">Create your account</h2>
-                <form className="space-y-6" onSubmit={handleSubmit}>
-                    <div className="space-y-4">
-                        <div>
-                            <input id="name" name="name" type="text" required
-                                className="block w-full px-3 py-2 border-b border-gray-300 placeholder-gray-500 focus:outline-none focus:ring-0 focus:border-blue-500 sm:text-sm"
-                                placeholder="Name *" value={name} onChange={(e) => setName(e.target.value)} />
-                        </div>
-                        <div>
-                            <input id="email" name="email" type="email" autoComplete="email" required
-                                className="block w-full px-3 py-2 border-b border-gray-300 placeholder-gray-500 focus:outline-none focus:ring-0 focus:border-blue-500 sm:text-sm"
-                                placeholder="Email address *" value={email} onChange={(e) => setEmail(e.target.value)} />
-                        </div>
-                        <div>
-                            <input id="password" name="password" type="password" autoComplete="new-password" required
-                                className="block w-full px-3 py-2 border-b border-gray-300 placeholder-gray-500 focus:outline-none focus:ring-0 focus:border-blue-500 sm:text-sm"
-                                placeholder="Password *" value={password} onChange={(e) => setPassword(e.target.value)} />
-                        </div>
-                        <div>
-                            <input id="phoneNumber" name="phoneNumber" type="text" required
-                                className="block w-full px-3 py-2 border-b border-gray-300 placeholder-gray-500 focus:outline-none focus:ring-0 focus:border-blue-500 sm:text-sm"
-                                placeholder="Phone Number *" value={phoneNumber} onChange={(e) => setPhoneNumber(e.target.value)} />
-                        </div>
-                        <div>
-                            <input id="street" name="street" type="text"
-                                className="block w-full px-3 py-2 border-b border-gray-300 placeholder-gray-500 focus:outline-none focus:ring-0 focus:border-blue-500 sm:text-sm"
-                                placeholder="Street" value={address.street} onChange={(e) => setAddress({ ...address, street: e.target.value })} />
-                        </div>
-                        <div>
-                            <input id="city" name="city" type="text"
-                                className="block w-full px-3 py-2 border-b border-gray-300 placeholder-gray-500 focus:outline-none focus:ring-0 focus:border-blue-500 sm:text-sm"
-                                placeholder="City" value={address.city} onChange={(e) => setAddress({ ...address, city: e.target.value })} />
-                        </div>
-                        <div>
-                            <input id="state" name="state" type="text"
-                                className="block w-full px-3 py-2 border-b border-gray-300 placeholder-gray-500 focus:outline-none focus:ring-0 focus:border-blue-500 sm:text-sm"
-                                placeholder="State" value={address.state} onChange={(e) => setAddress({ ...address, state: e.target.value })} />
-                        </div>
-                        <div>
-                            <input id="country" name="country" type="text"
-                                className="block w-full px-3 py-2 border-b border-gray-300 placeholder-gray-500 focus:outline-none focus:ring-0 focus:border-blue-500 sm:text-sm"
-                                placeholder="Country" value={address.country} onChange={(e) => setAddress({ ...address, country: e.target.value })} />
-                        </div>
-                        <div>
-                            <input id="zipCode" name="zipCode" type="text"
-                                className="block w-full px-3 py-2 border-b border-gray-300 placeholder-gray-500 focus:outline-none focus:ring-0 focus:border-blue-500 sm:text-sm"
-                                placeholder="ZIP Code" value={address.zipCode} onChange={(e) => setAddress({ ...address, zipCode: e.target.value })} />
-                        </div>
+        <div className="flex items-center justify-center h-screen bg-gray-100">
+            <div className="bg-white p-8 rounded-lg shadow-md max-w-md w-full">
+                <h2 className="text-2xl font-bold mb-6">Register</h2>
+                {error && <p className="text-red-500 mb-4">{error}</p>}
+                <form onSubmit={handleRegister}>
+                    <div className="mb-4">
+                        <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="name">
+                            Name
+                        </label>
+                        <input
+                            id="name"
+                            type="text"
+                            value={name}
+                            onChange={(e) => setName(e.target.value)}
+                            className="border rounded w-full py-2 px-3 text-gray-700"
+                            required
+                        />
                     </div>
-                    <div>
-                        <button type="submit"
-                            className="w-full py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-500 hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-                            Register
-                        </button>
+                    <div className="mb-4">
+                        <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="email">
+                            Email
+                        </label>
+                        <input
+                            id="email"
+                            type="email"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            className="border rounded w-full py-2 px-3 text-gray-700"
+                            required
+                        />
                     </div>
+                    <div className="mb-4">
+                        <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="phoneNumber">
+                            Phone Number
+                        </label>
+                        <input
+                            id="phoneNumber"
+                            type="text"
+                            value={phoneNumber}
+                            onChange={(e) => setPhoneNumber(e.target.value)}
+                            className="border rounded w-full py-2 px-3 text-gray-700"
+                            required
+                        />
+                    </div>
+                    <div className="mb-4">
+                        <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="password">
+                            Password
+                        </label>
+                        <input
+                            id="password"
+                            type="password"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            className="border rounded w-full py-2 px-3 text-gray-700"
+                            required
+                        />
+                    </div>
+                    <div className="mb-4">
+                        <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="confirmPassword">
+                            Confirm Password
+                        </label>
+                        <input
+                            id="confirmPassword"
+                            type="password"
+                            value={confirmPassword}
+                            onChange={(e) => setConfirmPassword(e.target.value)}
+                            className="border rounded w-full py-2 px-3 text-gray-700"
+                            required
+                        />
+                    </div>
+                    <button
+                        type="submit"
+                        className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded"
+                    >
+                        Register
+                    </button>
                 </form>
             </div>
         </div>

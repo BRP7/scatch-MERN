@@ -1,66 +1,67 @@
 import React, { useState } from 'react';
+import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
 const Login = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [error, setError] = useState('');
     const navigate = useNavigate();
 
-    const handleSubmit = async (e) => {
+    const handleLogin = async (e) => {
         e.preventDefault();
         try {
-            const response = await fetch('http://localhost:5000/api/auth/login', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ email, password }),
-                credentials: 'include' // Include credentials to send cookies
-            });
+            const response = await axios.post('http://localhost:5000/api/auth/login', {
+                email,
+                password,
+            }, { withCredentials: true });
 
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-
-            const data = await response.json();
-            if (data.message === 'Login successful') {
-                console.log('Login successful:', data);
-                localStorage.setItem('token', data.token); // Optional, if you also want to store it in localStorage
-                alert('Login successful');
-                navigate('/profile'); // Redirect to profile page after successful login
-            } else {
-                console.log('Login failed:', data);
-                alert('Login failed');
+            if (response.status === 200) {
+                navigate('/profile');
             }
         } catch (error) {
-            console.error('Error:', error);
-            alert('An error occurred');
+            setError('Invalid email or password');
         }
     };
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-            <div className="max-w-md w-full bg-white shadow-md rounded-lg p-8 space-y-8">
-                <h2 className="text-2xl font-semibold text-gray-900">Sign in to your account</h2>
-                <form className="space-y-6" onSubmit={handleSubmit}>
-                    <div className="space-y-4">
-                        <div>
-                            <input id="email" name="email" type="email" autoComplete="email" required
-                                className="block w-full px-3 py-2 border-b border-gray-300 placeholder-gray-500 focus:outline-none focus:ring-0 focus:border-blue-500 sm:text-sm"
-                                placeholder="Email address" value={email} onChange={(e) => setEmail(e.target.value)} />
-                        </div>
-                        <div>
-                            <input id="password" name="password" type="password" autoComplete="current-password" required
-                                className="block w-full px-3 py-2 border-b border-gray-300 placeholder-gray-500 focus:outline-none focus:ring-0 focus:border-blue-500 sm:text-sm"
-                                placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} />
-                        </div>
+        <div className="flex items-center justify-center h-screen bg-gray-100">
+            <div className="bg-white p-8 rounded-lg shadow-md max-w-md w-full">
+                <h2 className="text-2xl font-bold mb-6">Login</h2>
+                {error && <p className="text-red-500 mb-4">{error}</p>}
+                <form onSubmit={handleLogin}>
+                    <div className="mb-4">
+                        <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="email">
+                            Email
+                        </label>
+                        <input
+                            id="email"
+                            type="email"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            className="border rounded w-full py-2 px-3 text-gray-700"
+                            required
+                        />
                     </div>
-                    <div>
-                        <button type="submit"
-                            className="w-full py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-500 hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-                            Sign in
-                        </button>
+                    <div className="mb-6">
+                        <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="password">
+                            Password
+                        </label>
+                        <input
+                            id="password"
+                            type="password"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            className="border rounded w-full py-2 px-3 text-gray-700"
+                            required
+                        />
                     </div>
+                    <button
+                        type="submit"
+                        className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded"
+                    >
+                        Login
+                    </button>
                 </form>
             </div>
         </div>
