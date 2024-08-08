@@ -51,7 +51,7 @@ export const updateProfile = async (req, res) => {
 
     await user.save();
 
-    res.json(user); // Return updated user object
+    res.json(user); 
   } catch (err) {
     console.error('Server Error:', err);
     res.status(500).send('Server Error');
