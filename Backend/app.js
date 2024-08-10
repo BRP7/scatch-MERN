@@ -22,6 +22,17 @@ app.get('/check-cookies', (req, res) => {
     res.json({ cookies: req.cookies });
 });
 
+
+app.get('/', async (req, res) => {
+    try {
+        const products = await Product.find();
+        res.json(products);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+});
+
+
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
