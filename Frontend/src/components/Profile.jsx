@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 const Profile = () => {
+    const navigate = useNavigate();
     const [user, setUser] = useState(null);
     const [editMode, setEditMode] = useState(false);
     const [formData, setFormData] = useState({
@@ -82,13 +84,29 @@ const Profile = () => {
         }
     };
 
-    const handleLogout = () => {
-        // Add your logout logic here
-    };
-
-    if (!user) {
-        return <div>Loading...</div>;
-    }
+    const handleLogout = async () => {
+        try {
+          await axios.post("http://localhost:5000/api/auth/logout", {}, {
+            withCredentials: true, 
+          });
+          navigate('/login');
+        } catch (error) {
+          console.error("Error logging out:", error);
+          alert("Logout failed. Please try again.");
+        }
+      };
+    
+      if (!user) {
+        return (
+          <div className="flex items-center justify-center h-screen">
+            <div className="animate-spin rounded-full h-20 w-20 border-t-2 border-b-2 border-gray-900"></div>
+            <div className="ml-4 text-gray-900 text-2xl font-semibold">
+              Loading..
+            </div>
+          </div>
+        );
+      }
+    
 
     const addressLine = user.address ? 
         `${user.address.street || ''}, ${user.address.city || ''}, ${user.address.state || ''}, ${user.address.country || ''} ${user.address.zipCode || ''}`
