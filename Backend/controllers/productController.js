@@ -1,4 +1,4 @@
-import Product from '../models/Product.js';
+import Product from '../models/product.models.js';
 
 export const createProduct = async (req, res) => {
     const { name, description, price, stock, category, images, seller } = req.body;
@@ -18,4 +18,9 @@ export const createProduct = async (req, res) => {
     } catch (error) {
         res.status(400).json({ message: error.message });
     }
+};
+
+
+export const getProduct = (req, res) => {
+    // controller logic
 };
