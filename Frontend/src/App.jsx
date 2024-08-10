@@ -5,6 +5,7 @@ import Login from './components/Login';
 import Register from './components/Register';
 import ThemeSwitcher from './components/ThemeSwiter';
 import './index.css';
+import './styles.css';
 
 const App = () => {
     return (

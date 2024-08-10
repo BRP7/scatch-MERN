@@ -1,119 +1,37 @@
-:root {
-    --background-color: #ffffff;
-    --text-color: #000000;
+/* Common styles for light and dark modes */
+.input-field {
+    border: none;
+    border-bottom: 2px solid;
+    outline: none;
+    padding: 8px 0;
+    font-size: 16px;
+    transition: border-color 0.3s ease;
   }
   
-  [data-theme="dark"] {
-    --background-color: #000000;
-    --text-color: #ffffff;
+  /* Light mode styles */
+  .light-mode .input-field {
+    border-bottom-color: #ddd;
+    color: #333;
   }
   
-  body {
-    background-color: var(--background-color);
-    color: var(--text-color);
+  .light-mode .input-field:focus {
+    border-bottom-color: #007bff;
   }
-
-body {
-    background-color: var(--bg-color);
-    color: var(--text-color);
-    font-family: Arial, sans-serif;
-}
-
-.profile-container {
-    max-width: 800px;
-    margin: 0 auto;
-    padding: 20px;
-    background-color: var(--bg-color);
-    color: var(--text-color);
-    border: 1px solid var(--border-color);
-    border-radius: 8px;
-}
-
-.profile-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
-}
-
-.profile-avatar {
-    display: flex;
-    align-items: center;
-}
-
-.avatar {
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    background-color: #ccc;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 24px;
-    margin-right: 10px;
-}
-
-.profile-info {
-    flex-grow: 1;
-}
-
-.logout-button {
-    background-color: #ff4d4f;
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 5px;
-    cursor: pointer;
-}
-
-.profile-details {
-    border-top: 1px solid var(--border-color);
-    padding-top: 20px;
-}
-
-.edit-button, .save-button {
-    background-color: #888;
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 5px;
-    cursor: pointer;
-    margin-top: 10px;
-}
-
-.input-box {
+  
+  /* Dark mode styles */
+  .dark-mode .input-field {
+    border-bottom-color: #555;
+    color: #ccc;
+  }
+  
+  .dark-mode .input-field:focus {
+    border-bottom-color: #1e90ff;
+  }
+  
+  /* Styles for labels */
+  .label {
     display: block;
-    width: 100%;
-    padding: 10px;
-    margin: 10px 0;
-    border: 1px solid var(--border-color);
-    border-radius: 5px;
-    background-color: var(--input-bg-color);
-    color: var(--text-color);
-}
-
-/* Light theme styles */
-body {
-    --bg-color: #ffffff;
-    --text-color: #000000;
-    --border-color: #dddddd;
-    --input-bg-color: #f9f9f9;
-}
-
-/* Dark theme styles */
-body.dark {
-    --bg-color: #121212;
-    --text-color: #e0e0e0;
-    --border-color: #444444;
-    --input-bg-color: #333333;
-}
-
-/* Apply variables */
-body {
-    background-color: var(--bg-color);
-    color: var(--text-color);
-}
-
-input, button {
-    border: 1px solid var(--border-color);
-}
+    margin-bottom: 8px;
+    font-weight: bold;
+  }
+  
