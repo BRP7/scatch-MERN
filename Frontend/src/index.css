@@ -2,131 +2,106 @@
 @tailwind components;
 @tailwind utilities;
 
-body {
-    background-color: var(--bg-color);
-    color: var(--text-color);
-    font-family: Arial, sans-serif;
+@layer utilities {
+  .text-gold {
+    color: #c8a165;
+  }
+
+  .border-gold {
+    border-color: #c8a165;
+  }
+
+  .bg-gold {
+    background-color: #c8a165;
+  }
+
+  .lux-button {
+    @apply bg-black text-white border-2 border-gold rounded-full py-2 px-4 transition-all duration-300 ease-in-out;
+  }
+
+  .lux-button:hover {
+    @apply bg-gold text-black;
+  }
+
+  .bg-dark-gradient {
+    background: linear-gradient(135deg, #000000 0%, #1C1C1E 100%);
+  }
 }
+@layer utilities {
+    .text-gold {
+      color: #c8a165;
+    }
+  
+    .lux-button {
+      @apply bg-black text-white border-2 border-gold rounded-full py-2 px-4 transition-all duration-300 ease-in-out;
+    }
+  
+    .lux-button:hover {
+      @apply bg-gold text-black;
+    }
+  
+    .bg-dark-gradient {
+      background: linear-gradient(135deg, #000000 0%, #1C1C1E 100%);
+      box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.5);
+    }
+    
+    .sparkle-dust {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: transparent;
+      pointer-events: none;
+      overflow: hidden;
+      z-index: 1;
+    }
+  
+    .sparkle-dust::before, .sparkle-dust::after {
+        content: '';
+        position: absolute;
+        width: 5px; /* Increased size for more visibility */
+        height: 5px; /* Increased size for more visibility */
+        background: rgba(200, 161, 101, 0.9); /* Slightly more opaque for sparkle */
+        border-radius: 50%;
+        animation: sparkle 2s infinite ease-in-out;
+        box-shadow: 0px 0px 12px rgba(200, 161, 101, 0.9); /* More prominent shadow */
+      }
 
-.profile-container {
-    max-width: 800px;
-    margin: 0 auto;
-    padding: 20px;
-    background-color: var(--bg-color);
-    color: var(--text-color);
-    border: 1px solid var(--border-color);
-    border-radius: 8px;
-}
-
-.profile-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
-}
-
-.profile-avatar {
-    display: flex;
-    align-items: center;
-}
-
-.avatar {
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    background-color: #ccc;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 24px;
-    margin-right: 10px;
-}
-
-.profile-info {
-    flex-grow: 1;
-}
-
-.logout-button {
-    background-color: #ff4d4f;
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 5px;
-    cursor: pointer;
-}
-
-.profile-details {
-    border-top: 1px solid var(--border-color);
-    padding-top: 20px;
-}
-
-.edit-button {
-    background-color: #888;
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 5px;
-    cursor: pointer;
-}
-
-/* Light theme styles */
-body {
-    --bg-color: #ffffff;
-    --text-color: #000000;
-    --border-color: #dddddd;
-}
-
-/* Dark theme styles */
-body.dark {
-    --bg-color: #121212;
-    --text-color: #e0e0e0;
-    --border-color: #444444;
-}
-
-/* Apply variables */
-body {
-    background-color: var(--bg-color);
-    color: var(--text-color);
-}
-
-/* input, button {
-    border: 1px solid var(--border-color);
-} */
-
-/* Common styles for light and dark modes */
-.input-field {
-    border: none;
-    border-bottom: 2px solid;
-    outline: none;
-    padding: 8px 0;
-    font-size: 16px;
-    transition: border-color 0.3s ease;
+      .sparkle-dust::nth-child(1) { left: 10%; top: 20%; }
+.sparkle-dust::nth-child(2) { left: 20%; top: 30%; }
+.sparkle-dust::nth-child(3) { left: 30%; top: 40%; }
+.sparkle-dust::nth-child(4) { left: 40%; top: 50%; }
+.sparkle-dust::nth-child(5) { left: 50%; top: 60%; }
+.sparkle-dust::nth-child(6) { left: 60%; top: 70%; }
+.sparkle-dust::nth-child(7) { left: 70%; top: 80%; }
+.sparkle-dust::nth-child(8) { left: 80%; top: 90%; }
+.sparkle-dust::nth-child(9) { left: 90%; top: 50%; }
+.sparkle-dust::nth-child(10) { left: 20%; top: 90%; }
+  
+    .sparkle-dust::before {
+      left: 20%;
+      top: 30%;
+    }
+  
+    .sparkle-dust::after {
+      left: 70%;
+      top: 80%;
+      animation-delay: 1s;
+    }
   }
   
-  /* Light mode styles */
-  .light-mode .input-field {
-    border-bottom-color: #ddd;
-    color: #333;
+  @keyframes sparkle {
+    0% {
+      opacity: 0.2;
+      transform: translateY(0) scale(0.5);
+    }
+    50% {
+      opacity: 1;
+      transform: translateY(-20px) scale(1);
+    }
+    100% {
+      opacity: 0.2;
+      transform: translateY(0) scale(0.5);
+    }
   }
-  
-  .light-mode .input-field:focus {
-    border-bottom-color: #007bff;
-  }
-  
-  /* Dark mode styles */
-  .dark-mode .input-field {
-    border-bottom-color: #555;
-    color: #ccc;
-  }
-  
-  .dark-mode .input-field:focus {
-    border-bottom-color: #1e90ff;
-  }
-  
-  /* Styles for labels */
-  .label {
-    display: block;
-    margin-bottom: 8px;
-    font-weight: bold;
-  }
-  

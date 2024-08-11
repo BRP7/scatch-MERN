@@ -36,13 +36,13 @@ const Register = () => {
     };
 
     return (
-        <div className="flex items-center justify-center h-screen bg-gray-100">
-            <div className="bg-white p-8 rounded-lg shadow-md max-w-md w-full">
-                <h2 className="text-2xl font-bold mb-6">Register</h2>
+        <div className="flex items-center justify-center h-screen bg-dark-gradient">
+            <div className="bg-black p-8 rounded-lg shadow-md max-w-md w-full">
+                <h2 className="text-2xl font-bold text-gold mb-6">Register</h2>
                 {error && <p className="text-red-500 mb-4">{error}</p>}
                 <form onSubmit={handleRegister}>
                     <div className="mb-4">
-                        <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="name">
+                        <label className="block text-gold text-sm font-bold mb-2" htmlFor="name">
                             Name
                         </label>
                         <input
@@ -50,12 +50,12 @@ const Register = () => {
                             type="text"
                             value={name}
                             onChange={(e) => setName(e.target.value)}
-                            className="border rounded w-full py-2 px-3 text-gray-700"
+                            className="border-gold bg-black text-white rounded w-full py-2 px-3"
                             required
                         />
                     </div>
                     <div className="mb-4">
-                        <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="email">
+                        <label className="block text-gold text-sm font-bold mb-2" htmlFor="email">
                             Email
                         </label>
                         <input
@@ -63,12 +63,12 @@ const Register = () => {
                             type="email"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
-                            className="border rounded w-full py-2 px-3 text-gray-700"
+                            className="border-gold bg-black text-white rounded w-full py-2 px-3"
                             required
                         />
                     </div>
                     <div className="mb-4">
-                        <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="phoneNumber">
+                        <label className="block text-gold text-sm font-bold mb-2" htmlFor="phoneNumber">
                             Phone Number
                         </label>
                         <input
@@ -76,12 +76,12 @@ const Register = () => {
                             type="text"
                             value={phoneNumber}
                             onChange={(e) => setPhoneNumber(e.target.value)}
-                            className="border rounded w-full py-2 px-3 text-gray-700"
+                            className="border-gold bg-black text-white rounded w-full py-2 px-3"
                             required
                         />
                     </div>
                     <div className="mb-4">
-                        <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="password">
+                        <label className="block text-gold text-sm font-bold mb-2" htmlFor="password">
                             Password
                         </label>
                         <input
@@ -89,12 +89,12 @@ const Register = () => {
                             type="password"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
-                            className="border rounded w-full py-2 px-3 text-gray-700"
+                            className="border-gold bg-black text-white rounded w-full py-2 px-3"
                             required
                         />
                     </div>
                     <div className="mb-4">
-                        <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="confirmPassword">
+                        <label className="block text-gold text-sm font-bold mb-2" htmlFor="confirmPassword">
                             Confirm Password
                         </label>
                         <input
@@ -102,13 +102,13 @@ const Register = () => {
                             type="password"
                             value={confirmPassword}
                             onChange={(e) => setConfirmPassword(e.target.value)}
-                            className="border rounded w-full py-2 px-3 text-gray-700"
+                            className="border-gold bg-black text-white rounded w-full py-2 px-3"
                             required
                         />
                     </div>
                     <button
                         type="submit"
-                        className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded"
+                        className="lux-button mt-4 w-full"
                     >
                         Register
                     </button>

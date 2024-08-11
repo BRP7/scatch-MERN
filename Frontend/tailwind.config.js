@@ -1,19 +1,17 @@
-// tailwind.config.js
 module.exports = {
-  darkMode: 'class',
-  theme: {
-    extend: {
-      colors: {
-        dark: {
-          900: '#1a202c',
-          800: '#2d3748',
+  content: [
+    "./src/**/*.{js,jsx,ts,tsx}",
+  ],
+    theme: {
+      extend: {
+        colors: {
+          gold: '#c8a165',
+        },
+        fontFamily: {
+          cinzel: ['Cinzel Decorative', 'cursive'],
+          playfair: ['Playfair Display', 'serif'],
         },
       },
-      fontFamily: {
-        serif: ['Merriweather', 'serif'],
-        sans: ['Open Sans', 'sans-serif'],
-      },
     },
-  },
-  plugins: [],
-};
+    plugins: [],
+  };

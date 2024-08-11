@@ -1,45 +1,58 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import React, { useEffect, useState } from 'react';
 import ProductCard from './ProductCard';
+import '../index.css'; // Ensure this path is correct based on your project structure
 
 const Shop = () => {
-    const [products, setProducts] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
+  const [products, setProducts] = useState([]);
 
-    useEffect(() => {
-        const fetchProducts = async () => {
-            try {
-                const response = await axios.get('http://localhost:5000/api/product?page=1&limit=10');
-                setProducts(response.data.products);
-                setLoading(false);
-            } catch (err) {
-                setError(err.message);
-                setLoading(false);
-            }
-        };
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const response = await fetch('http://localhost:5000/api/product?page=1&limit=10');
+        const data = await response.json();
+        console.log('Fetched data:', data); // Log data for debugging
+        setProducts(data.products || []);
+      } catch (error) {
+        console.error('Error fetching products:', error);
+      }
+    };
 
-        fetchProducts();
-    }, []);
+    fetchProducts();
+  }, []);
 
-    if (loading) return <p className="text-center py-4 text-gray-500">Loading...</p>;
-    if (error) return <p className="text-center py-4 text-red-500">Error fetching products: {error}</p>;
+  const handleAddToCart = (product) => {
+    console.log('Add to cart', product);
+  };
 
-    return (
-        <div className="bg-gray-100 dark:bg-gray-900 min-h-screen">
-            <div className="container mx-auto p-8">
-                <h1 className="text-4xl font-bold mb-12 text-gray-900 dark:text-white text-center">Our Collection</h1>
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-12">
-                    {products.map(product => (
-                        <ProductCard 
-                            key={product._id} 
-                            product={product} 
-                        />
-                    ))}
-                </div>
-            </div>
+  const handleAddToWishlist = (product) => {
+    console.log('Add to wishlist', product);
+  };
+
+  return (
+    <div className="bg-dark-gradient relative min-h-screen flex flex-col items-center">
+      <div className="sparkle-dust"></div>
+      <header className="lux-header text-center p-5 text-gold font-cinzel text-5xl z-10">
+        LuxShop
+      </header>
+      <section className="text-center p-5 z-10">
+        <h1 className="lux-header text-white font-playfair text-4xl">Our Collection</h1>
+        <div className="container mx-auto px-6 py-12">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-10 mt-10">
+            {products.map((product) => (
+              <ProductCard
+                key={product.id}
+                title={product.name}
+                price={product.price}
+                imageUrl={product.imageUrl}
+                handleAddToCart={() => handleAddToCart(product)}
+                handleAddToWishlist={() => handleAddToWishlist(product)}
+              />
+            ))}
+          </div>
         </div>
-    );
+      </section>
+    </div>
+  );
 };
 
 export default Shop;
