@@ -1,36 +1,39 @@
 import React from "react";
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import { BrowserRouter as Router, Route, Routes, useLocation } from "react-router-dom";
 import Profile from "./components/Profile";
 import Login from "./components/Login";
 import Register from "./components/Register";
 import Shop from "./components/Shop";
 import ThemeSwitcher from "./components/ThemeSwiter";
 import AdminProductForm from "./components/AdminProductForm";
-import { Route, Routes, useLocation } from "react-router-dom";
+import Menu from "./components/Menu"; // Assuming Menu is a component you have
 import "./index.css";
 import "./styles.css";
 
-const App = () => {
+const AppContent = () => {
   const location = useLocation();
   const showMenu = !["/login", "/register"].includes(location.pathname);
   return (
     <div>
-      {" "}
       {showMenu && <Menu />}
-      <Router>
-        <div className="App">
-          <ThemeSwitcher />
-          <Routes>
-            <Route path="/profile" element={<Profile />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
-            <Route path="/" element={<Shop />} />
-            <Route path="/admin/products" component={AdminProductForm} />
-          </Routes>
-        </div>
-      </Router>
+      <div className="App">
+        <ThemeSwitcher />
+        <Routes>
+          <Route path="/profile" element={<Profile />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/" element={<Shop />} />
+          <Route path="/admin/products" element={<AdminProductForm />} />
+        </Routes>
+      </div>
     </div>
   );
 };
+
+const App = () => (
+  <Router>
+    <AppContent />
+  </Router>
+);
 
 export default App;
