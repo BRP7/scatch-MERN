@@ -2,6 +2,7 @@ import express from 'express';
 import { createProduct,getProduct,getPaginatedProducts } from '../controllers/productController.js';
 import { adminMiddleware, sellerMiddleware, premiumSellerMiddleware } from '../middlewares/roleMiddleware.js';
 import { authenticate } from '../middlewares/authMiddleware.js';
+import { upload } from '../middlewares/uploadMiddleware.js';
 
 
 const router = express.Router();
@@ -15,6 +16,12 @@ router.get('/admin/:id', adminMiddleware, getProduct);
 router.get('/seller/:id', sellerMiddleware, getProduct);
 
 router.get('/premium-seller/:id', premiumSellerMiddleware, getProduct);
+
+router.post('/upload-image', upload.single('image'), (req, res) => {
+    res.json({ filePath: `uploads/${req.file.filename}` });
+  });
+
+  
 
 // router.post('/create', verifyToken, isAdmin, async (req, res) => {
 //     const { name, description, price, stock, category, images, seller } = req.body;
