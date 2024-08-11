@@ -1,62 +1,42 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { FaShoppingCart, FaHeart } from 'react-icons/fa';
+import ProductCard from './ProductCard';
 
 const Shop = () => {
     const [products, setProducts] = useState([]);
-    const [wishlist, setWishlist] = useState([]);
-    const [cart, setCart] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
 
     useEffect(() => {
         const fetchProducts = async () => {
             try {
-                const response = await axios.get('/api/products');
-                setProducts(response.data);
-            } catch (error) {
-                console.error('Error fetching products:', error);
+                const response = await axios.get('http://localhost:5000/api/product?page=1&limit=10');
+                setProducts(response.data.products);
+                setLoading(false);
+            } catch (err) {
+                setError(err.message);
+                setLoading(false);
             }
         };
 
         fetchProducts();
     }, []);
 
-    const addToCart = (product) => {
-        setCart([...cart, product]);
-    };
-
-    const addToWishlist = (product) => {
-        setWishlist([...wishlist, product]);
-    };
+    if (loading) return <p className="text-center py-4 text-gray-500">Loading...</p>;
+    if (error) return <p className="text-center py-4 text-red-500">Error fetching products: {error}</p>;
 
     return (
-        <div className="p-6 md:p-8 lg:p-10">
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-                {products.map((product) => (
-                    <div key={product._id} className="bg-white rounded-lg shadow-lg overflow-hidden transition-transform transform hover:scale-105">
-                        <img src={product.images[0] || 'https://via.placeholder.com/150'} alt={product.name} className="w-full h-48 object-cover" />
-                        <div className="p-4">
-                            <h3 className="text-lg font-semibold text-gray-800">{product.name}</h3>
-                            <p className="text-sm text-gray-600 mt-1">{product.description}</p>
-                            <p className="text-xl font-bold text-gray-900 mt-2">${product.price.toFixed(2)}</p>
-                        </div>
-                        <div className="flex justify-between p-4 border-t border-gray-200">
-                            <button
-                                onClick={() => addToCart(product)}
-                                className="flex items-center gap-2 bg-blue-500 hover:bg-blue-600 text-white px-3 py-2 rounded-md transition"
-                            >
-                                <FaShoppingCart />
-                                <span>Add to Cart</span>
-                            </button>
-                            <button
-                                onClick={() => addToWishlist(product)}
-                                className="flex items-center gap-2 bg-red-500 hover:bg-red-600 text-white px-3 py-2 rounded-md transition"
-                            >
-                                <FaHeart />
-                                <span>Add to Wishlist</span>
-                            </button>
-                        </div>
-                    </div>
-                ))}
+        <div className="bg-gray-100 dark:bg-gray-900 min-h-screen">
+            <div className="container mx-auto p-8">
+                <h1 className="text-4xl font-bold mb-12 text-gray-900 dark:text-white text-center">Our Collection</h1>
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-12">
+                    {products.map(product => (
+                        <ProductCard 
+                            key={product._id} 
+                            product={product} 
+                        />
+                    ))}
+                </div>
             </div>
         </div>
     );
