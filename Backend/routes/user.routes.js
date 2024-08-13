@@ -40,7 +40,6 @@ router.post('/verify-2fa', authenticate, async (req, res) => {
     }
 });
 
-// router.get('/profile', authenticate,profile);
 router.get('/profile', authenticate, getProfile);
 router.put('/profile', authenticate, updateProfile);
 
