@@ -1,5 +1,4 @@
 import express from 'express';
-// import { getUser } from '../controllers/userController.js';
 import { adminMiddleware, customerMiddleware } from '../middlewares/roleMiddleware.js';
 import { authenticate } from '../middlewares/authMiddleware.js';
 import User from '../models/user.models.js';
