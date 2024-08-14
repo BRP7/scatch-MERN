@@ -13,7 +13,7 @@ function sellerMiddleware(req, res, next) {
 }
 
 function premiumSellerMiddleware(req, res, next) {
-    if (req.user.role !== 'premiumSeller' && req.user.role !== 'admin') {
+    if (req.user.role !== 'premium seller' && req.user.role !== 'admin') {
         return res.status(403).send('Access denied.');
     }
     next();

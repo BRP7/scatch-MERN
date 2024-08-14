@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
 const AdminProductForm = () => {
@@ -8,19 +8,35 @@ const AdminProductForm = () => {
         price: '',
         stock: '',
         category: '',
-        images: null, // Changed to handle file uploads
+        images: null,  // Changed to handle file uploads
         seller: ''
     });
     const [message, setMessage] = useState('');
+    const [sellers, setSellers] = useState([]);  // To store list of sellers
 
-    // Options for category and seller dropdowns
     const categories = [
         'Luxury Handbags', 'Designer Bags', 'Vintage Bags', 'Tote Bags', 
         'Clutches', 'Shoulder Bags', 'Crossbody Bags', 'Satchels'
     ];
-    const sellers = [
-        'Seller 1', 'Seller 2', 'Seller 3', 'Seller 4'
-    ];
+
+    useEffect(() => {
+        async function fetchSellers() {
+            try {
+                const response = await fetch('http://localhost:5000/api/sellers');
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                const sellersData = await response.json();
+                console.log('Sellers fetched:', sellersData);
+                setSellers(sellersData); // Update state with fetched sellers
+                console.log('Sellers state updated:', sellersData); // Check state update
+            } catch (error) {
+                console.error('Error fetching sellers:', error);
+            }
+        }
+
+        fetchSellers();
+    }, []);
 
     const handleChange = (e) => {
         const { name, value, files } = e.target;
@@ -43,7 +59,7 @@ const AdminProductForm = () => {
         }
 
         try {
-            const response = await axios.post('/api/product/create', formDataToSend, { 
+            const response = await axios.post('http://localhost:5000/api/product/create', formDataToSend, { 
                 headers: {
                     'Content-Type': 'multipart/form-data'
                 },
@@ -154,7 +170,7 @@ const AdminProductForm = () => {
                         >
                             <option value="">Select Seller</option>
                             {sellers.map(seller => (
-                                <option key={seller} value={seller}>{seller}</option>
+                                <option key={seller._id} value={seller._id}>{seller.storeName}</option>
                             ))}
                         </select>
                     </label>

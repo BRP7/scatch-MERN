@@ -62,7 +62,7 @@ const userSchema = mongoose.Schema({
     twoFactorSecret: {
         type: String
     },
-    twoFactorRecoveryCodes: [String],  // Array to store recovery codes if using TOTP
+    twoFactorRecoveryCodes: [String],
     resetPasswordToken: String,
     resetPasswordExpires: Date,
     isActive: {

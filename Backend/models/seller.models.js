@@ -1,8 +1,15 @@
+import mongoose from "mongoose";
+
 const sellerSchema = mongoose.Schema({
     user: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
         required: true
+    },
+    role: { 
+        type: String, 
+        enum: ['user', 'admin', 'seller', 'premium seller'], 
+        default: 'user' 
     },
     storeName: {
         type: String,
@@ -25,4 +32,8 @@ const sellerSchema = mongoose.Schema({
     }
 });
 
-module.exports = mongoose.model('Seller', sellerSchema);
+const Seller = mongoose.model('Seller', sellerSchema);
+export default Seller;
+
+
+// module.exports = mongoose.model('Seller', sellerSchema);
