@@ -18,7 +18,7 @@ const Profile = () => {
             zipCode: '',
         },
     });
-    // const [isDarkMode, setIsDarkMode] = useState(false);
+    const [isDarkMode, setIsDarkMode] = useState(false);
 
     useEffect(() => {
         const fetchUserData = async () => {
