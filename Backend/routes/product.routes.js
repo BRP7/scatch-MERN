@@ -2,7 +2,7 @@ import express from 'express';
 import { createProduct,getProduct,getPaginatedProducts } from '../controllers/productController.js';
 import { adminMiddleware, sellerMiddleware, premiumSellerMiddleware } from '../middlewares/roleMiddleware.js';
 import { authenticate } from '../middlewares/authMiddleware.js';
-import { upload } from '../middlewares/uploadMiddleware.js';
+import upload from '../middlewares/uploadMiddleware.js';
 
 
 const router = express.Router();
