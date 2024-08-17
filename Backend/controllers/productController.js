@@ -4,7 +4,7 @@ import Category from '../models/category.models.js';
 export const createProduct = async (req, res) => {
     const { name, description, price, stock, category: categoryName, seller } = req.body;
     const images = req.file ? req.file.path : undefined;
-
+    console.log(categoryName);
     try {
         // Find the category by name
         const categoryData = await Category.findOne({ name: categoryName });
