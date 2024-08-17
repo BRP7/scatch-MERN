@@ -40,33 +40,84 @@
     z-index: 1;
   }
 
-  .sparkle-dust::before,
-  .sparkle-dust::after {
+  .sparkle-dust::before, .sparkle-dust::after {
     content: '';
     position: absolute;
-    width: 10px;
-    height: 10px;
-    background: rgba(200, 161, 101, 0.8);
+    width: 5px; /* Increased size for more visibility */
+    height: 5px; /* Increased size for more visibility */
+    background: rgba(200, 161, 101, 0.9); /* Slightly more opaque for sparkle */
     border-radius: 50%;
     animation: sparkle 2s infinite ease-in-out;
+    box-shadow: 0px 0px 12px rgba(200, 161, 101, 0.9); /* More prominent shadow */
   }
 
+  .sparkle-dust::nth-child(1) { left: 10%; top: 20%; }
+  .sparkle-dust::nth-child(2) { left: 20%; top: 30%; }
+  .sparkle-dust::nth-child(3) { left: 30%; top: 40%; }
+  .sparkle-dust::nth-child(4) { left: 40%; top: 50%; }
+  .sparkle-dust::nth-child(5) { left: 50%; top: 60%; }
+  .sparkle-dust::nth-child(6) { left: 60%; top: 70%; }
+  .sparkle-dust::nth-child(7) { left: 70%; top: 80%; }
+  .sparkle-dust::nth-child(8) { left: 80%; top: 90%; }
+  .sparkle-dust::nth-child(9) { left: 90%; top: 50%; }
+  .sparkle-dust::nth-child(10) { left: 20%; top: 90%; }
+
   .sparkle-dust::before {
-    left: 10%;
-    top: 10%;
-    animation-delay: 0s;
+    left: 20%;
+    top: 30%;
   }
 
   .sparkle-dust::after {
-    left: 50%;
-    top: 50%;
+    left: 70%;
+    top: 80%;
     animation-delay: 1s;
+  }
+  .bg-black {
+    background-color: #000000; /* Black background for placeholder */
+  }
+
+  .bg-transparent {
+    background-color: transparent; /* Transparent background */
+  }
+
+  .object-cover {
+    object-fit: cover; /* Ensure image covers its container */
+  }
+
+  .overflow-hidden {
+    overflow: hidden; /* Hide overflowing content */
+  }
+
+  .w-full {
+    width: 100%; /* Full width */
+  }
+
+  .h-full {
+    height: 100%; /* Full height */
+  }
+
+  /* .h-2/3 {
+    height: 66.666667%; 
+  } */
+
+  .text-gray-500 {
+    color: #9ca3af; /* Gray text color */
+  }
+
+  .text-gold {
+    color: #c8a165; 
+  }
+
+  .border-gold {
+    border-color: #c8a165; 
   }
 }
 
+
+
 @keyframes sparkle {
   0% {
-    opacity: 0.3;
+    opacity: 0.2;
     transform: translateY(0) scale(0.5);
   }
   50% {
@@ -74,7 +125,7 @@
     transform: translateY(-20px) scale(1);
   }
   100% {
-    opacity: 0.3;
+    opacity: 0.2;
     transform: translateY(0) scale(0.5);
   }
 }

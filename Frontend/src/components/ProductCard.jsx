@@ -13,11 +13,19 @@ const ProductCard = ({ title, price, imageUrl, handleAddToCart, handleAddToWishl
       </button>
       
       {/* Product Image */}
-      <div className="w-full h-2/3 bg-gray-900 flex items-center justify-center">
+      <div className="w-full h-2/3 flex items-center justify-center bg-black overflow-hidden">
         {imageUrl ? (
-          <img src={imageUrl} alt={title} className="w-full h-full object-cover" />
+          <img
+            src={imageUrl}
+            alt={title}
+            className="w-full h-full object-cover"
+            style={{ display: 'block' }}
+            onError={(e) => e.target.style.display = 'none'} // Hide broken image
+          />
         ) : (
-          <p className="text-gray-600 text-lg">No Image</p>
+          <div className="w-full h-full flex items-center justify-center bg-transparent">
+            <span className="text-gray-500 text-lg">No Image</span>
+          </div>
         )}
       </div>
 
