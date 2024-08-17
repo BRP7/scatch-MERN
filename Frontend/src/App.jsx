@@ -21,6 +21,7 @@ const AppContent = () => {
         <Routes>
           <Route path="/profile" element={<Profile />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/logout" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/" element={<Shop />} />
           <Route path="/admin/products" element={<AdminProductForm />} />

@@ -43,6 +43,6 @@ router.post('/upload-image', upload.single('image'), (req, res) => {
 //     }
 // });
 
-router.post('/create', authenticate, premiumSellerMiddleware, createProduct);
+router.post('/create', authenticate, adminMiddleware, createProduct);
 
 export default router;

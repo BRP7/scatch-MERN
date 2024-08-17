@@ -41,7 +41,7 @@ router.post('/verify-2fa', authenticate, async (req, res) => {
 });
 
 router.get('/profile', authenticate, getProfile);
-router.put('/profile', authenticate, updateProfile);
+// router.put('/profile', authenticate, updateProfile);
 
 router.get('/orders', authenticate, async (req, res) => {
     try {

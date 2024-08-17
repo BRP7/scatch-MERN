@@ -125,4 +125,8 @@ userSchema.methods.comparePassword = async function (password) {
     return await bcrypt.compare(password, this.password);
 };
 
+userSchema.statics.getUserById = async function(userId) {
+    return this.findById(userId).exec();
+};
+
 export default mongoose.model('User', userSchema);
