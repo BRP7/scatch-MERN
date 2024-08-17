@@ -40,10 +40,10 @@ const Shop = () => {
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-10 mt-10">
             {products.map((product) => (
               <ProductCard
-                key={product.id}
+                key={product._id} // Use product._id for unique key
                 title={product.name}
                 price={product.price}
-                imageUrl={product.imageUrl}
+                imageUrl={product.images[0]} // Assuming images is an array and using the first image
                 handleAddToCart={() => handleAddToCart(product)}
                 handleAddToWishlist={() => handleAddToWishlist(product)}
               />
