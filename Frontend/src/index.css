@@ -25,83 +25,56 @@
 
   .bg-dark-gradient {
     background: linear-gradient(135deg, #000000 0%, #1C1C1E 100%);
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.5);
+  }
+
+  .sparkle-dust {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: transparent;
+    pointer-events: none;
+    overflow: hidden;
+    z-index: 1;
+  }
+
+  .sparkle-dust::before,
+  .sparkle-dust::after {
+    content: '';
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    background: rgba(200, 161, 101, 0.8);
+    border-radius: 50%;
+    animation: sparkle 2s infinite ease-in-out;
+  }
+
+  .sparkle-dust::before {
+    left: 10%;
+    top: 10%;
+    animation-delay: 0s;
+  }
+
+  .sparkle-dust::after {
+    left: 50%;
+    top: 50%;
+    animation-delay: 1s;
   }
 }
-@layer utilities {
-    .text-gold {
-      color: #c8a165;
-    }
-  
-    .lux-button {
-      @apply bg-black text-white border-2 border-gold rounded-full py-2 px-4 transition-all duration-300 ease-in-out;
-    }
-  
-    .lux-button:hover {
-      @apply bg-gold text-black;
-    }
-  
-    .bg-dark-gradient {
-      background: linear-gradient(135deg, #000000 0%, #1C1C1E 100%);
-      box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.5);
-    }
-    
-    .sparkle-dust {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: transparent;
-      pointer-events: none;
-      overflow: hidden;
-      z-index: 1;
-    }
-  
-    .sparkle-dust::before, .sparkle-dust::after {
-        content: '';
-        position: absolute;
-        width: 5px; /* Increased size for more visibility */
-        height: 5px; /* Increased size for more visibility */
-        background: rgba(200, 161, 101, 0.9); /* Slightly more opaque for sparkle */
-        border-radius: 50%;
-        animation: sparkle 2s infinite ease-in-out;
-        box-shadow: 0px 0px 12px rgba(200, 161, 101, 0.9); /* More prominent shadow */
-      }
 
-      .sparkle-dust::nth-child(1) { left: 10%; top: 20%; }
-.sparkle-dust::nth-child(2) { left: 20%; top: 30%; }
-.sparkle-dust::nth-child(3) { left: 30%; top: 40%; }
-.sparkle-dust::nth-child(4) { left: 40%; top: 50%; }
-.sparkle-dust::nth-child(5) { left: 50%; top: 60%; }
-.sparkle-dust::nth-child(6) { left: 60%; top: 70%; }
-.sparkle-dust::nth-child(7) { left: 70%; top: 80%; }
-.sparkle-dust::nth-child(8) { left: 80%; top: 90%; }
-.sparkle-dust::nth-child(9) { left: 90%; top: 50%; }
-.sparkle-dust::nth-child(10) { left: 20%; top: 90%; }
-  
-    .sparkle-dust::before {
-      left: 20%;
-      top: 30%;
-    }
-  
-    .sparkle-dust::after {
-      left: 70%;
-      top: 80%;
-      animation-delay: 1s;
-    }
+@keyframes sparkle {
+  0% {
+    opacity: 0.3;
+    transform: translateY(0) scale(0.5);
   }
-  
-  @keyframes sparkle {
-    0% {
-      opacity: 0.2;
-      transform: translateY(0) scale(0.5);
-    }
-    50% {
-      opacity: 1;
-      transform: translateY(-20px) scale(1);
-    }
-    100% {
-      opacity: 0.2;
-      transform: translateY(0) scale(0.5);
-    }
+  50% {
+    opacity: 1;
+    transform: translateY(-20px) scale(1);
   }
+  100% {
+    opacity: 0.3;
+    transform: translateY(0) scale(0.5);
+  }
+}

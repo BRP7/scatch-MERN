@@ -10,7 +10,6 @@ const Shop = () => {
       try {
         const response = await fetch('http://localhost:5000/api/product?page=1&limit=10');
         const data = await response.json();
-        console.log('Fetched data:', data); // Log data for debugging
         setProducts(data.products || []);
       } catch (error) {
         console.error('Error fetching products:', error);
@@ -40,10 +39,10 @@ const Shop = () => {
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-10 mt-10">
             {products.map((product) => (
               <ProductCard
-                key={product._id} // Use product._id for unique key
+                key={product._id} // Use unique identifier from your backend
                 title={product.name}
                 price={product.price}
-                imageUrl={product.images[0]} // Assuming images is an array and using the first image
+                imageUrl={product.images[0]} // Adjust based on your data structure
                 handleAddToCart={() => handleAddToCart(product)}
                 handleAddToWishlist={() => handleAddToWishlist(product)}
               />
