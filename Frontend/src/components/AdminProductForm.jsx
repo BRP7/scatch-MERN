@@ -43,6 +43,7 @@ const AdminProductForm = () => {
 
         // Handle file upload
         if (name === 'images') {
+            console.log(files[0]);
             setFormData({ ...formData, [name]: files[0] });
         } else {
             setFormData({ ...formData, [name]: value });

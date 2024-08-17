@@ -27,7 +27,7 @@ const createSeller = async () => {
         });
 
         await seller.save();
-        console.log('Seller created successfully:', seller);
+        // console.log('Seller created successfully:', seller);
     } catch (error) {
         console.error('Error creating seller:', error);
     } finally {

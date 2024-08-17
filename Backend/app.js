@@ -38,20 +38,6 @@ app.get('/', async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 });
-app.get('/make-admin', authenticate, async (req, res) => {
-    try {
-        console.log(usr)
-        req.user.role = 'admin';
-        await req.user.save();
-
-        res.status(200).send('Your role has been updated to admin successfully');
-    } catch (error) {
-        console.error('Error updating role:', error);
-        res.status(500).send('Internal Server Error');
-    }
-});
-
-
 
 // Routes
 app.use('/api/auth', authRoutes);

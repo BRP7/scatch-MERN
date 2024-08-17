@@ -1,11 +1,11 @@
 import express from 'express';
-import multer from 'multer';
+import upload from '../middlewares/multerMiddleware.js';
 import { createProduct, getProduct, getPaginatedProducts } from '../controllers/productController.js';
 import { adminMiddleware, sellerMiddleware, premiumSellerMiddleware } from '../middlewares/roleMiddleware.js';
 import { authenticate } from '../middlewares/authMiddleware.js';
 
 // Set up multer for handling file uploads
-const upload = multer({ dest: 'uploads/' });
+// const upload = multer({ dest: 'uploads' });
 
 const router = express.Router();
 

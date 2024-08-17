@@ -1,21 +1,27 @@
 import React from 'react';
+import { ShoppingCartIcon, HeartIcon } from '@heroicons/react/24/outline'; // Import icons
 
-const ProductCard = ({ title, price, imageUrl }) => {
+const ProductCard = ({ title, price, imageUrl, handleAddToCart, handleAddToWishlist }) => {
   return (
-    <div className="relative bg-gradient-to-br from-gray-800 via-black to-black rounded-lg shadow-lg transition-transform transform hover:scale-105 hover:shadow-xl overflow-hidden w-full h-80 md:w-64 md:h-96 lg:w-80 lg:h-120">
-      <div className="absolute inset-0 sparkle-dust"></div>
-      <div className="relative w-full h-full">
-        <img
-          className="w-full h-full object-cover rounded-t-lg"
-          src={imageUrl}
-          alt={title}
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-black to-transparent opacity-60 rounded-t-lg"></div>
-        <div className="absolute bottom-4 left-4 text-xl font-semibold text-white z-10">{title}</div>
-      </div>
-      <div className="absolute bottom-0 left-0 right-0 p-4 bg-black bg-opacity-60 rounded-b-lg flex flex-col justify-end">
-        <p className="text-xl text-gold font-semibold mb-2">{price}</p>
-        <button className="lux-button mt-2 w-full">Add to Cart</button>
+    <div className="bg-white rounded-lg shadow-md overflow-hidden">
+      <img src={imageUrl} alt={title} className="w-full h-40 object-cover" />
+      <div className="p-4">
+        <h2 className="text-lg font-semibold text-gray-800">{title}</h2>
+        <p className="text-xl font-bold text-gray-900">${price}</p>
+        <div className="flex justify-between items-center mt-4">
+          <button
+            onClick={handleAddToCart}
+            className="bg-blue-500 text-white py-2 px-4 rounded-lg flex items-center"
+          >
+            <ShoppingCartIcon className="h-5 w-5 mr-2" /> Add to Cart
+          </button>
+          <button
+            onClick={handleAddToWishlist}
+            className="bg-red-500 text-white py-2 px-4 rounded-lg flex items-center"
+          >
+            <HeartIcon className="h-5 w-5 mr-2" /> Wishlist
+          </button>
+        </div>
       </div>
     </div>
   );

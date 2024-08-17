@@ -1,16 +1,23 @@
+import cloudinary from '../configurations/cloudinaryConfig.js'; // Import Cloudinary configuration
 import Product from '../models/product.models.js';
 import Category from '../models/category.models.js';
 
 export const createProduct = async (req, res) => {
     const { name, description, price, stock, category: categoryName, seller } = req.body;
-    const images = req.file ? req.file.path : undefined;
-    console.log(categoryName);
+    const images = req.files ? req.files.map(file => file.path) : [];
+
     try {
         // Find the category by name
         const categoryData = await Category.findOne({ name: categoryName });
         if (!categoryData) {
             return res.status(400).json({ message: 'Category not found' });
         }
+
+        // Upload images to Cloudinary
+        const uploadedImages = await Promise.all(images.map(async (imagePath) => {
+            const result = await cloudinary.uploader.upload(imagePath);
+            return result.secure_url; // URL of the uploaded image
+        }));
 
         // Create the new product
         const newProduct = new Product({
@@ -19,7 +26,7 @@ export const createProduct = async (req, res) => {
             price,
             stock,
             category: categoryData._id,
-            images,
+            images: uploadedImages,
             seller
         });
 
@@ -36,6 +43,13 @@ export const createProduct = async (req, res) => {
     }
 };
 
+
+
+// <form action="/api/product/create" method="POST" encType="multipart/form-data">
+//     {/* <!-- Other form fields --> */}
+//     <input type="file" name="images" multiple />
+//     <button type="submit">Submit</button>
+// </form>
 
 export const getPaginatedProducts = async (req, res) => {
     const { page = 1, limit = 10 } = req.query;  // Default to page 1 and 10 items per page
