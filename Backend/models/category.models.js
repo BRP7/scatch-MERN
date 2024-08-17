@@ -1,3 +1,5 @@
+import mongoose from "mongoose";
+
 const categorySchema = mongoose.Schema({
     name: {
         type: String,
@@ -16,5 +18,5 @@ const categorySchema = mongoose.Schema({
         default: Date.now
     }
 });
-
-module.exports = mongoose.model('Category', categorySchema);
+const Category = mongoose.model('Category', categorySchema);
+export default Category;
