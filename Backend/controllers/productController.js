@@ -1,7 +1,11 @@
 import Product from '../models/product.models.js';
 
 export const createProduct = async (req, res) => {
-    const { name, description, price, stock, category, images, seller } = req.body;
+    // const { name, description, price, stock, category, images, seller } = req.body;
+    const { name, description, price, stock, category, seller } = req.body;
+    const images = req.file ? req.file.path : undefined; // Handle file upload
+    // const category = await Category.findOne({ name: category });
+
 
     try {
         const newProduct = new Product({
@@ -9,8 +13,8 @@ export const createProduct = async (req, res) => {
             description,
             price,
             stock,
-            category,
-            images,
+              category: 1,
+            images: files,
             seller
         });
         await newProduct.save();
