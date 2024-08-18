@@ -14,7 +14,7 @@ const CategoryForm = () => {
             const response = await axios.post('http://localhost:5000/api/categories/create', {
                 name,
                 description,
-            });
+            },{ withCredentials: true });
 
             if (response.status === 200) {
                 navigate('/categories');
@@ -53,7 +53,7 @@ const CategoryForm = () => {
                             value={description}
                             onChange={(e) => setDescription(e.target.value)}
                             className="border-b-2 border-gold bg-transparent text-white rounded w-full py-2 px-3 focus:outline-none"
-                            rows="4"
+                            rows="1"
                         />
                     </div>
                     <button

@@ -8,18 +8,24 @@ const AdminProductForm = () => {
         price: '',
         stock: '',
         category: '',
-        images: null,  // Changed to handle file uploads
+        images: null,
         seller: ''
     });
     const [message, setMessage] = useState('');
-    const [sellers, setSellers] = useState([]);  // To store list of sellers
-
-    const categories = [
-        'Luxury Handbags', 'Designer Bags', 'Vintage Bags', 'Tote Bags', 
-        'Clutches', 'Shoulder Bags', 'Crossbody Bags', 'Satchels'
-    ];
+    const [sellers, setSellers] = useState([]);
+    const [categories, setCategories] = useState([]);
 
     useEffect(() => {
+        const fetchCategories = async () => {
+            try {
+                const response = await axios.get('http://localhost:5000/api/categories', {
+                    withCredentials: true
+                });
+                setCategories(response.data);
+            } catch (error) {
+                console.error('Error fetching categories:', error);
+            }
+        };
         async function fetchSellers() {
             try {
                 const response = await fetch('http://localhost:5000/api/sellers');
@@ -27,23 +33,19 @@ const AdminProductForm = () => {
                     throw new Error('Network response was not ok');
                 }
                 const sellersData = await response.json();
-                console.log('Sellers fetched:', sellersData);
-                setSellers(sellersData); // Update state with fetched sellers
-                console.log('Sellers state updated:', sellersData); // Check state update
+                setSellers(sellersData);
             } catch (error) {
                 console.error('Error fetching sellers:', error);
             }
         }
 
+        fetchCategories();
         fetchSellers();
     }, []);
 
     const handleChange = (e) => {
         const { name, value, files } = e.target;
-
-        // Handle file upload
         if (name === 'images') {
-            console.log(files[0]);
             setFormData({ ...formData, [name]: files[0] });
         } else {
             setFormData({ ...formData, [name]: value });
@@ -52,8 +54,6 @@ const AdminProductForm = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-
-        // Create FormData to handle file uploads
         const formDataToSend = new FormData();
         for (const key in formData) {
             formDataToSend.append(key, formData[key]);
@@ -77,112 +77,116 @@ const AdminProductForm = () => {
                 seller: ''
             });
         } catch (error) {
-            setMessage('Error adding product: ' + error.response.data.message);
+            setMessage('Error adding product: ' + error.response?.data?.message || 'Server error');
         }
     };
 
     return (
-        <div className="p-6 max-w-lg mx-auto bg-white rounded-lg shadow-md">
-            <h2 className="text-2xl font-semibold mb-4">Add New Product</h2>
-            {message && <p className="mb-4 text-red-500">{message}</p>}
-            <form onSubmit={handleSubmit}>
-                <div className="mb-4">
-                    <label className="block text-gray-700 text-sm font-semibold mb-2">
-                        Name:
-                        <input
-                            type="text"
-                            name="name"
-                            value={formData.name}
-                            onChange={handleChange}
-                            className="mt-1 block w-full border border-gray-300 rounded-lg px-3 py-2"
-                        />
-                    </label>
-                </div>
-                <div className="mb-4">
-                    <label className="block text-gray-700 text-sm font-semibold mb-2">
-                        Description:
-                        <textarea
-                            name="description"
-                            value={formData.description}
-                            onChange={handleChange}
-                            className="mt-1 block w-full border border-gray-300 rounded-lg px-3 py-2"
-                        />
-                    </label>
-                </div>
-                <div className="mb-4">
-                    <label className="block text-gray-700 text-sm font-semibold mb-2">
-                        Price:
-                        <input
-                            type="number"
-                            name="price"
-                            value={formData.price}
-                            onChange={handleChange}
-                            className="mt-1 block w-full border border-gray-300 rounded-lg px-3 py-2"
-                        />
-                    </label>
-                </div>
-                <div className="mb-4">
-                    <label className="block text-gray-700 text-sm font-semibold mb-2">
-                        Stock:
-                        <input
-                            type="number"
-                            name="stock"
-                            value={formData.stock}
-                            onChange={handleChange}
-                            className="mt-1 block w-full border border-gray-300 rounded-lg px-3 py-2"
-                        />
-                    </label>
-                </div>
-                <div className="mb-4">
-                    <label className="block text-gray-700 text-sm font-semibold mb-2">
-                        Category:
-                        <select
-                            name="category"
-                            value={formData.category}
-                            onChange={handleChange}
-                            className="mt-1 block w-full border border-gray-300 rounded-lg px-3 py-2"
-                        >
-                            <option value="">Select Category</option>
-                            {categories.map(category => (
-                                <option key={category} value={category}>{category}</option>
-                            ))}
-                        </select>
-                    </label>
-                </div>
-                <div className="mb-4">
-                    <label className="block text-gray-700 text-sm font-semibold mb-2">
-                        Images:
-                        <input
-                            type="file"
-                            name="images"
-                            onChange={handleChange}
-                            className="mt-1 block w-full"
-                        />
-                    </label>
-                </div>
-                <div className="mb-4">
-                    <label className="block text-gray-700 text-sm font-semibold mb-2">
-                        Seller:
-                        <select
-                            name="seller"
-                            value={formData.seller}
-                            onChange={handleChange}
-                            className="mt-1 block w-full border border-gray-300 rounded-lg px-3 py-2"
-                        >
-                            <option value="">Select Seller</option>
-                            {sellers.map(seller => (
-                                <option key={seller._id} value={seller._id}>{seller.storeName}</option>
-                            ))}
-                        </select>
-                    </label>
-                </div>
-                <button
-                    type="submit"
-                    className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg"
-                >
-                    Add Product
-                </button>
-            </form>
+        <div className="flex items-center justify-center min-h-screen bg-dark-gradient relative">
+            <div className="absolute inset-0 sparkle-dust"></div>
+            <div className="bg-black p-8 rounded-lg shadow-md border border-gold max-w-lg w-full relative z-10 mt-16">
+                <h2 className="text-2xl font-semibold mb-4 text-gold">Add New Product</h2>
+                {message && <p className="mb-4 text-red-500">{message}</p>}
+                <form onSubmit={handleSubmit}>
+                    <div className="mb-4">
+                        <label className="block text-gold text-sm font-semibold mb-2">
+                            Name:
+                            <input
+                                type="text"
+                                name="name"
+                                value={formData.name}
+                                onChange={handleChange}
+                                className="mt-1 block w-full border border-gold rounded-lg px-3 py-2 bg-black text-white"
+                                required
+                            />
+                        </label>
+                    </div>
+                    <div className="mb-4">
+                        <label className="block text-gold text-sm font-semibold mb-2">
+                            Description:
+                            <textarea
+                                name="description"
+                                value={formData.description}
+                                onChange={handleChange}
+                                className="mt-1 block w-full border border-gold rounded-lg px-3 py-2 bg-black text-white"
+                            />
+                        </label>
+                    </div>
+                    <div className="mb-4">
+                        <label className="block text-gold text-sm font-semibold mb-2">
+                            Price:
+                            <input
+                                type="number"
+                                name="price"
+                                value={formData.price}
+                                onChange={handleChange}
+                                className="mt-1 block w-full border border-gold rounded-lg px-3 py-2 bg-black text-white"
+                            />
+                        </label>
+                    </div>
+                    <div className="mb-4">
+                        <label className="block text-gold text-sm font-semibold mb-2">
+                            Stock:
+                            <input
+                                type="number"
+                                name="stock"
+                                value={formData.stock}
+                                onChange={handleChange}
+                                className="mt-1 block w-full border border-gold rounded-lg px-3 py-2 bg-black text-white"
+                            />
+                        </label>
+                    </div>
+                    <div className="mb-4">
+                        <label className="block text-gold text-sm font-semibold mb-2">
+                            Category:
+                            <select
+                                name="category"
+                                value={formData.category}
+                                onChange={handleChange}
+                                className="mt-1 block w-full border border-gold rounded-lg px-3 py-2 bg-black text-white"
+                            >
+                                <option value="">Select Category</option>
+                                {categories.map(category => (
+                                    <option key={category._id} value={category._id}>{category.name}</option>
+                                ))}
+                            </select>
+                        </label>
+                    </div>
+                    <div className="mb-4">
+                        <label className="block text-gold text-sm font-semibold mb-2">
+                            Images:
+                            <input
+                                type="file"
+                                name="images"
+                                onChange={handleChange}
+                                className="mt-1 block w-full"
+                            />
+                        </label>
+                    </div>
+                    <div className="mb-4">
+                        <label className="block text-gold text-sm font-semibold mb-2">
+                            Seller:
+                            <select
+                                name="seller"
+                                value={formData.seller}
+                                onChange={handleChange}
+                                className="mt-1 block w-full border border-gold rounded-lg px-3 py-2 bg-black text-white"
+                            >
+                                <option value="">Select Seller</option>
+                                {sellers.map(seller => (
+                                    <option key={seller._id} value={seller._id}>{seller.storeName}</option>
+                                ))}
+                            </select>
+                        </label>
+                    </div>
+                    <button
+                        type="submit"
+                        className="bg-gold hover:bg-gold-dark text-black px-4 py-2 rounded-lg mt-4 w-full"
+                    >
+                        Add Product
+                    </button>
+                </form>
+            </div>
         </div>
     );
 };
