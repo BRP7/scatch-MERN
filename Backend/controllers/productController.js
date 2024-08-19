@@ -2,6 +2,7 @@
 import cloudinary from '../configurations/cloudinaryConfig.js'; // Import Cloudinary configuration
 import Product from '../models/product.models.js';
 import Category from '../models/category.models.js';
+import Review from '../models/review.models.js';
 import mongoose from 'mongoose';
 
 
@@ -185,6 +186,7 @@ export const updateProduct = async (req, res) => {
         res.status(400).json({ message: error.message });
     }
 };
+
 
 
   

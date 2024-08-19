@@ -85,7 +85,6 @@ const AdminProductForm = ({ onProductSaved }) => {
         }
     };
     
-
     const handleSubmit = async (e) => {
         e.preventDefault();
         const formDataToSend = new FormData();
@@ -115,10 +114,10 @@ const AdminProductForm = ({ onProductSaved }) => {
                 });
                 setMessage('Product added successfully!');
             }
-            onProductSaved();
+            // onProductSaved();
             navigate('/admin/products');
         } catch (error) {
-            console.error('Error response data:', error.response?.data);
+            console.error('Error response data:', error);
             setMessage('Error saving product: ' + (error.response?.data?.message || 'Server error'));
         }
     };
