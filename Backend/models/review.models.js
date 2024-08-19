@@ -1,3 +1,6 @@
+// models/reviewModel.js
+import mongoose from 'mongoose';
+
 const reviewSchema = mongoose.Schema({
     user: {
         type: mongoose.Schema.Types.ObjectId,
@@ -27,4 +30,4 @@ const reviewSchema = mongoose.Schema({
     }
 });
 
-module.exports = mongoose.model('Review', reviewSchema);
+export default mongoose.model('Review', reviewSchema);

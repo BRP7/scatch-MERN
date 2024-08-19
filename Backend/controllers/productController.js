@@ -69,6 +69,26 @@ export const getPaginatedProducts = async (req, res) => {
 };
 
 // Controller for a single product (to be implemented)
-export const getProduct = (req, res) => {
-    // Controller logic here
+// controllers/productController.js
+// import Product from '../models/productModel.js';
+// controllers/productController.js
+import Review from '../models/review.models.js';
+
+export const getProduct = async (req, res) => {
+  try {
+    const productId = req.params.id;
+    const product = await Product.findById(productId)
+      .populate('category', 'name')
+      .populate('reviews')          
+      .populate('seller', 'storeName');
+
+    if (!product) {
+      return res.status(404).json({ message: 'Product not found' });
+    }
+
+    res.json(product);
+  } catch (error) {
+    res.status(500).json({ message: 'Error fetching product details' });
+  }
 };
+
