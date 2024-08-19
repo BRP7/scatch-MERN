@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
-const AdminProductForm = () => {
+const AdminProductForm = ({ productToEdit, onProductSaved }) => {
     const [formData, setFormData] = useState({
         name: '',
         description: '',
@@ -14,6 +14,7 @@ const AdminProductForm = () => {
     const [message, setMessage] = useState('');
     const [sellers, setSellers] = useState([]);
     const [categories, setCategories] = useState([]);
+    const [isEditMode, setIsEditMode] = useState(false);
 
     useEffect(() => {
         const fetchCategories = async () => {
@@ -26,6 +27,7 @@ const AdminProductForm = () => {
                 console.error('Error fetching categories:', error);
             }
         };
+
         async function fetchSellers() {
             try {
                 const response = await fetch('http://localhost:5000/api/sellers');
@@ -41,7 +43,22 @@ const AdminProductForm = () => {
 
         fetchCategories();
         fetchSellers();
-    }, []);
+
+        if (productToEdit) {
+            setFormData({
+                name: productToEdit.name || '',
+                description: productToEdit.description || '',
+                price: productToEdit.price || '',
+                stock: productToEdit.stock || '',
+                category: productToEdit.category || '',
+                images: null,
+                seller: productToEdit.seller || ''
+            });
+            setIsEditMode(true);
+        } else {
+            setIsEditMode(false);
+        }
+    }, [productToEdit]);
 
     const handleChange = (e) => {
         const { name, value, files } = e.target;
@@ -60,13 +77,29 @@ const AdminProductForm = () => {
         }
 
         try {
-            const response = await axios.post('http://localhost:5000/api/product/create', formDataToSend, { 
-                headers: {
-                    'Content-Type': 'multipart/form-data'
-                },
-                withCredentials: true 
-            });
-            setMessage('Product added successfully!');
+            let response;
+            if (isEditMode) {
+                response = await axios.put(`http://localhost:5000/api/product/update/${productToEdit._id}`, formDataToSend, { 
+                    headers: {
+                        'Content-Type': 'multipart/form-data'
+                    },
+                    withCredentials: true 
+                });
+                setMessage('Product updated successfully!');
+            } else {
+                response = await axios.post('http://localhost:5000/api/product/create', formDataToSend, { 
+                    headers: {
+                        'Content-Type': 'multipart/form-data'
+                    },
+                    withCredentials: true 
+                });
+                setMessage('Product added successfully!');
+            }
+
+            // Notify parent component about the change
+            onProductSaved();
+
+            // Reset form
             setFormData({
                 name: '',
                 description: '',
@@ -76,8 +109,9 @@ const AdminProductForm = () => {
                 images: null,
                 seller: ''
             });
+            setIsEditMode(false);
         } catch (error) {
-            setMessage('Error adding product: ' + error.response?.data?.message || 'Server error');
+            setMessage('Error saving product: ' + error.response?.data?.message || 'Server error');
         }
     };
 
@@ -85,7 +119,7 @@ const AdminProductForm = () => {
         <div className="flex items-center justify-center min-h-screen bg-dark-gradient relative">
             <div className="absolute inset-0 sparkle-dust"></div>
             <div className="bg-black p-8 rounded-lg shadow-md border border-gold max-w-lg w-full relative z-10 mt-16">
-                <h2 className="text-2xl font-semibold mb-4 text-gold">Add New Product</h2>
+                <h2 className="text-2xl font-semibold mb-4 text-gold">{isEditMode ? 'Edit Product' : 'Add New Product'}</h2>
                 {message && <p className="mb-4 text-red-500">{message}</p>}
                 <form onSubmit={handleSubmit}>
                     <div className="mb-4">
@@ -183,7 +217,7 @@ const AdminProductForm = () => {
                         type="submit"
                         className="bg-gold hover:bg-gold-dark text-black px-4 py-2 rounded-lg mt-4 w-full"
                     >
-                        Add Product
+                        {isEditMode ? 'Update Product' : 'Add Product'}
                     </button>
                 </form>
             </div>
