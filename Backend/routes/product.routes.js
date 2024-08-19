@@ -12,7 +12,9 @@ router.get('/:id', getProduct);
 
 // Admin routes
 router.get('/admin/products', authenticate, adminMiddleware,getAllProductsForAdmin);
-router.delete('/admin/delete/:id', authenticate, adminMiddleware, deleteProduct); // Delete a product
+router.delete('/admin/delete/:id', authenticate, adminMiddleware, deleteProduct);
+router.get('/admin/:id', authenticate, adminMiddleware, getProduct);
+
 
 // Create product route (admin only)
 router.post('/create', authenticate, adminMiddleware, upload.array('images', 10), createProduct);

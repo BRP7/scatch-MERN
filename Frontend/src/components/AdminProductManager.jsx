@@ -21,7 +21,7 @@ const AdminProductManager = () => {
 
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`http://localhost:5000/api/products/delete/${id}`);
+      await axios.delete(`http://localhost:5000/api/product/delete/${id}`);
       setProducts(products.filter((product) => product._id !== id));
     } catch (error) {
       console.error("Error deleting product:", error);
@@ -35,16 +35,18 @@ const AdminProductManager = () => {
         <h2 className="text-2xl font-semibold mb-4 text-gold">
           Manage Products
         </h2>
-        <table className="w-full text-left">
+        <table className="w-full text-left border-separate border-spacing-0">
           <thead>
             <tr>
-              <th className="py-2 px-4 border-b border-gold">Name</th>
-              <th className="py-2 px-4 border-b border-gold">Price</th>
-              <th className="py-2 px-4 border-b border-gold">Actions</th>
+              <th className="py-2 px-4 border-b border-gold text-gold">Image</th>
+              <th className="py-2 px-4 border-b border-gold text-gold">Name</th>
+              <th className="py-2 px-4 border-b border-gold text-gold">Description</th>
+              <th className="py-2 px-4 border-b border-gold text-gold">Price</th>
+              <th className="py-2 px-4 border-b border-gold text-gold">Seller</th>
+              <th className="py-2 px-4 border-b border-gold text-gold">Actions</th>
             </tr>
           </thead>
           <tbody>
-            // Debug to check image URLs
             {products.map((product) => (
               <tr key={product._id}>
                 <td className="py-2 px-4 border-b border-gold">
@@ -55,25 +57,35 @@ const AdminProductManager = () => {
                       className="w-16 h-16 object-cover"
                     />
                   ) : (
-                    <span>No Image</span>
+                    <span className="text-gray-400">No Image</span>
                   )}
                 </td>
-                <td className="py-2 px-4 border-b border-gold">
+                <td className="py-2 px-4 border-b border-gold text-gold">
                   {product.name}
                 </td>
-                <td className="py-2 px-4 border-b border-gold">
+                <td className="py-2 px-4 border-b border-gold text-gold">
+                  {product.description}
+                </td>
+                <td className="py-2 px-4 border-b border-gold text-gold">
                   ${product.price}
+                </td>
+                <td className="py-2 px-4 border-b border-gold text-gold">
+                  {product.seller ? (
+                    <Link to={`/admin/seller/${product.seller}`} className="text-gold">Seller Info</Link>
+                  ) : (
+                    <span className="text-gray-400">No Seller Info</span>
+                  )}
                 </td>
                 <td className="py-2 px-4 border-b border-gold">
                   <Link
                     to={`/admin/product/edit/${product._id}`}
-                    className="text-gold mr-4"
+                    className="text-gold hover:underline"
                   >
                     Edit
                   </Link>
                   <button
                     onClick={() => handleDelete(product._id)}
-                    className="text-red-500"
+                    className="text-red-500 hover:underline"
                   >
                     Delete
                   </button>

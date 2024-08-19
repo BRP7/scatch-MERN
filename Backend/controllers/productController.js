@@ -1,6 +1,8 @@
 import cloudinary from '../configurations/cloudinaryConfig.js'; // Import Cloudinary configuration
 import Product from '../models/product.models.js';
 import Category from '../models/category.models.js';
+import Review from '../models/review.models.js';
+
 
 export const createProduct = async (req, res) => {
     const { name, description, price, stock, category: categoryId, seller } = req.body;
@@ -102,12 +104,18 @@ export const deleteProduct = async (req, res) => {
 };
 
 
+
 export const getProduct = async (req, res) => {
   try {
     const productId = req.params.id;
+    console.log('Fetching product with ID:', productId);
+
     const product = await Product.findById(productId)
       .populate('category', 'name')
-      .populate('reviews')          
+      .populate({
+        path: 'reviews',
+        model: 'Review',  // Ensure this matches the model name
+      })
       .populate('seller', 'storeName');
 
     if (!product) {
@@ -116,7 +124,9 @@ export const getProduct = async (req, res) => {
 
     res.json(product);
   } catch (error) {
+    console.error('Error fetching product:', error);
     res.status(500).json({ message: 'Error fetching product details' });
   }
 };
 
+  

@@ -1,7 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { useParams, useNavigate } from 'react-router-dom';
 
-const AdminProductForm = ({ productToEdit, onProductSaved }) => {
+const AdminProductForm = ({ onProductSaved }) => {
+    const { id } = useParams();
+    const navigate = useNavigate();
+    
     const [formData, setFormData] = useState({
         name: '',
         description: '',
@@ -19,16 +23,14 @@ const AdminProductForm = ({ productToEdit, onProductSaved }) => {
     useEffect(() => {
         const fetchCategories = async () => {
             try {
-                const response = await axios.get('http://localhost:5000/api/categories', {
-                    withCredentials: true
-                });
+                const response = await axios.get('http://localhost:5000/api/categories', { withCredentials: true });
                 setCategories(response.data);
             } catch (error) {
                 console.error('Error fetching categories:', error);
             }
         };
 
-        async function fetchSellers() {
+        const fetchSellers = async () => {
             try {
                 const response = await fetch('http://localhost:5000/api/sellers');
                 if (!response.ok) {
@@ -39,26 +41,36 @@ const AdminProductForm = ({ productToEdit, onProductSaved }) => {
             } catch (error) {
                 console.error('Error fetching sellers:', error);
             }
-        }
+        };
+
+        const fetchProduct = async () => {
+            if (id) {
+                try {
+                    const response = await axios.get(`http://localhost:5000/api/product/admin/${id}`, {
+                        withCredentials: true
+                    });
+                    setFormData({
+                        name: response.data.name || '',
+                        description: response.data.description || '',
+                        price: response.data.price || '',
+                        stock: response.data.stock || '',
+                        category: response.data.category || '',
+                        images: null,
+                        seller: response.data.seller || ''
+                    });
+                    setIsEditMode(true);
+                } catch (error) {
+                    console.error('Error fetching product:', error);
+                    setMessage('Error fetching product: ' + error.response?.data?.message || 'Server error');
+                }
+            }
+        };
+        
 
         fetchCategories();
         fetchSellers();
-
-        if (productToEdit) {
-            setFormData({
-                name: productToEdit.name || '',
-                description: productToEdit.description || '',
-                price: productToEdit.price || '',
-                stock: productToEdit.stock || '',
-                category: productToEdit.category || '',
-                images: null,
-                seller: productToEdit.seller || ''
-            });
-            setIsEditMode(true);
-        } else {
-            setIsEditMode(false);
-        }
-    }, [productToEdit]);
+        fetchProduct();
+    }, [id]);
 
     const handleChange = (e) => {
         const { name, value, files } = e.target;
@@ -79,7 +91,7 @@ const AdminProductForm = ({ productToEdit, onProductSaved }) => {
         try {
             let response;
             if (isEditMode) {
-                response = await axios.put(`http://localhost:5000/api/product/update/${productToEdit._id}`, formDataToSend, { 
+                response = await axios.put(`http://localhost:5000/api/product/update/${id}`, formDataToSend, { 
                     headers: {
                         'Content-Type': 'multipart/form-data'
                     },
@@ -96,20 +108,8 @@ const AdminProductForm = ({ productToEdit, onProductSaved }) => {
                 setMessage('Product added successfully!');
             }
 
-            // Notify parent component about the change
             onProductSaved();
-
-            // Reset form
-            setFormData({
-                name: '',
-                description: '',
-                price: '',
-                stock: '',
-                category: '',
-                images: null,
-                seller: ''
-            });
-            setIsEditMode(false);
+            navigate('/admin/products'); // Redirect after saving
         } catch (error) {
             setMessage('Error saving product: ' + error.response?.data?.message || 'Server error');
         }
