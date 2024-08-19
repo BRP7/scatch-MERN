@@ -90,8 +90,7 @@ const AdminProductForm = ({ onProductSaved }) => {
         e.preventDefault();
         const formDataToSend = new FormData();
         for (const key in formData) {
-            if (formData[key]) { 
-                // Log formData to check its contents
+            if (formData[key]) {
                 console.log(`Appending ${key}: ${formData[key]}`);
                 formDataToSend.append(key, formData[key]);
             }
@@ -119,9 +118,11 @@ const AdminProductForm = ({ onProductSaved }) => {
             onProductSaved();
             navigate('/admin/products');
         } catch (error) {
-            setMessage('Error saving product: ' + error.response?.data?.message || 'Server error');
+            console.error('Error response data:', error.response?.data);
+            setMessage('Error saving product: ' + (error.response?.data?.message || 'Server error'));
         }
     };
+    
     
     
 
