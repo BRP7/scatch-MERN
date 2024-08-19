@@ -68,11 +68,39 @@ export const getPaginatedProducts = async (req, res) => {
     }
 };
 
-// Controller for a single product (to be implemented)
-// controllers/productController.js
-// import Product from '../models/productModel.js';
-// controllers/productController.js
-import Review from '../models/review.models.js';
+
+export const getAllProductsForAdmin = async (req, res) => {
+    try {
+        const products = await Product.find(); // Fetch all products
+        res.json({ products });
+    } catch (error) {
+        res.status(500).json({ message: 'Error fetching products' });
+    }
+};
+
+
+export const deleteProduct = async (req, res) => {
+    const { id } = req.params;
+
+    try {
+        // Find the product and its category
+        const product = await Product.findById(id).populate('category');
+        if (!product) {
+            return res.status(404).json({ message: 'Product not found' });
+        }
+
+        // Remove the product from the category's products array
+        await Category.findByIdAndUpdate(product.category, { $pull: { products: id } });
+
+        // Delete the product
+        await Product.findByIdAndDelete(id);
+
+        res.status(200).json({ message: 'Product deleted successfully' });
+    } catch (error) {
+        res.status(500).json({ message: 'Error deleting product' });
+    }
+};
+
 
 export const getProduct = async (req, res) => {
   try {

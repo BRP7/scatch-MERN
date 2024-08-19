@@ -5,7 +5,7 @@ import Login from "./components/Login";
 import Register from "./components/Register";
 import Shop from "./components/Shop";
 import ThemeSwitcher from "./components/ThemeSwiter";
-import AdminProductForm from "./components/AdminProductForm";
+import AdminProductManager from "./components/AdminProductManager";
 import Menu from "./components/Menu";
 import CategoryForm from "./components/AdminCategoryForm";
 import ProductDetail from './components/ProductDetail';
@@ -27,7 +27,7 @@ const AppContent = () => {
           <Route path="/category/form" element={<CategoryForm />} />
           <Route path="/register" element={<Register />} />
           <Route path="/" element={<Shop />} />
-          <Route path="/admin/products" element={<AdminProductForm />} />
+          <Route path="/admin/products" element={<AdminProductManager />} />
           <Route path="/product/:id" element={<ProductDetail />} />
         </Routes>
       </div>
