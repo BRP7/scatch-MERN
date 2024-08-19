@@ -87,7 +87,7 @@ const AdminProductForm = ({ onProductSaved }) => {
         for (const key in formData) {
             formDataToSend.append(key, formData[key]);
         }
-
+    
         try {
             let response;
             if (isEditMode) {
@@ -107,13 +107,14 @@ const AdminProductForm = ({ onProductSaved }) => {
                 });
                 setMessage('Product added successfully!');
             }
-
+    
             onProductSaved();
-            navigate('/admin/products'); // Redirect after saving
+            navigate('/admin/products');
         } catch (error) {
             setMessage('Error saving product: ' + error.response?.data?.message || 'Server error');
         }
     };
+    
 
     return (
         <div className="flex items-center justify-center min-h-screen bg-dark-gradient relative">
