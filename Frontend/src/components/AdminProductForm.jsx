@@ -77,15 +77,24 @@ const AdminProductForm = ({ onProductSaved }) => {
         if (name === 'images') {
             setFormData({ ...formData, [name]: files[0] });
         } else {
+            // Ensure that category is treated as a string
+            if (name === 'category' && typeof value !== 'string') {
+                console.error('Category value should be a string');
+            }
             setFormData({ ...formData, [name]: value });
         }
     };
+    
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         const formDataToSend = new FormData();
         for (const key in formData) {
-            formDataToSend.append(key, formData[key]);
+            if (formData[key]) { 
+                // Log formData to check its contents
+                console.log(`Appending ${key}: ${formData[key]}`);
+                formDataToSend.append(key, formData[key]);
+            }
         }
     
         try {
@@ -107,13 +116,13 @@ const AdminProductForm = ({ onProductSaved }) => {
                 });
                 setMessage('Product added successfully!');
             }
-    
             onProductSaved();
             navigate('/admin/products');
         } catch (error) {
             setMessage('Error saving product: ' + error.response?.data?.message || 'Server error');
         }
     };
+    
     
 
     return (

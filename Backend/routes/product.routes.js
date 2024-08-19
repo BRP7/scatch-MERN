@@ -1,6 +1,6 @@
 import express from 'express';
 import upload from '../middlewares/multerMiddleware.js';
-import { createProduct, getAllProductsForAdmin ,getProduct, getPaginatedProducts, deleteProduct } from '../controllers/productController.js';
+import { createProduct, getAllProductsForAdmin ,getProduct, getPaginatedProducts, updateProduct,deleteProduct } from '../controllers/productController.js';
 import { adminMiddleware } from '../middlewares/roleMiddleware.js';
 import { authenticate } from '../middlewares/authMiddleware.js';
 

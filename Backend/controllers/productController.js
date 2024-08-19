@@ -1,4 +1,4 @@
-import cloudinary from '../configurations/cloudinaryConfig.js';
+// import cloudinary from '../configurations/cloudinaryConfig.js';
 import cloudinary from '../configurations/cloudinaryConfig.js'; // Import Cloudinary configuration
 import Product from '../models/product.models.js';
 import Category from '../models/category.models.js';
