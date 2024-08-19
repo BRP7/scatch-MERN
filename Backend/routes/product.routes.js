@@ -14,6 +14,7 @@ router.get('/:id', getProduct);
 router.get('/admin/products', authenticate, adminMiddleware,getAllProductsForAdmin);
 router.delete('/admin/delete/:id', authenticate, adminMiddleware, deleteProduct);
 router.get('/admin/:id', authenticate, adminMiddleware, getProduct);
+router.put('/update/:id', authenticate, adminMiddleware, upload.array('images', 10), updateProduct);
 
 
 // Create product route (admin only)

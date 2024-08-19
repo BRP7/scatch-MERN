@@ -1,3 +1,4 @@
+import cloudinary from '../configurations/cloudinaryConfig.js';
 import cloudinary from '../configurations/cloudinaryConfig.js'; // Import Cloudinary configuration
 import Product from '../models/product.models.js';
 import Category from '../models/category.models.js';
@@ -128,5 +129,53 @@ export const getProduct = async (req, res) => {
     res.status(500).json({ message: 'Error fetching product details' });
   }
 };
+
+
+export const updateProduct = async (req, res) => {
+    const { id } = req.params;
+    const { name, description, price, stock, category: categoryId, seller } = req.body;
+    const images = req.files ? req.files.map(file => file.path) : [];
+
+    try {
+        // Find the product by ID
+        const product = await Product.findById(id);
+        if (!product) {
+            return res.status(404).json({ message: 'Product not found' });
+        }
+
+        // Find the category by ID
+        const categoryData = await Category.findById(categoryId);
+        if (!categoryData) {
+            return res.status(400).json({ message: 'Category not found' });
+        }
+
+        // Handle image uploads and updates
+        let uploadedImages = product.images; // Preserve existing images
+        if (images.length > 0) {
+            // Upload new images to Cloudinary
+            const newImages = await Promise.all(images.map(async (imagePath) => {
+                const result = await cloudinary.uploader.upload(imagePath);
+                return result.secure_url; // URL of the uploaded image
+            }));
+            uploadedImages = [...uploadedImages, ...newImages];
+        }
+
+        // Update product details
+        product.name = name || product.name;
+        product.description = description || product.description;
+        product.price = price || product.price;
+        product.stock = stock || product.stock;
+        product.category = categoryData._id;
+        product.images = uploadedImages;
+        product.seller = seller || product.seller;
+
+        await product.save();
+
+        res.status(200).json(product);
+    } catch (error) {
+        res.status(400).json({ message: error.message });
+    }
+};
+
 
   
