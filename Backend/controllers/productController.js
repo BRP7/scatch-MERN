@@ -172,7 +172,6 @@ export const updateProduct = async (req, res) => {
 
         // Save the product and handle version conflicts
         const updatedProduct = await product.save();
-        console.log('success');
         res.status(200).json(updatedProduct);
     } catch (error) {
         if (error.name === 'VersionError') {
