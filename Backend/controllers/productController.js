@@ -116,7 +116,7 @@ export const getProduct = async (req, res) => {
       .populate('category', 'name')
       .populate({
         path: 'reviews',
-        model: 'Review',  // Ensure this matches the model name
+        model: 'Review',
       })
       .populate('seller', 'storeName');
 
@@ -138,24 +138,16 @@ export const updateProduct = async (req, res) => {
     const images = req.files ? req.files.map(file => file.path) : [];
 
     try {
-        // Validate categoryId and seller
-        if (!mongoose.Types.ObjectId.isValid(categoryId)) {
-            return res.status(400).json({ message: 'Invalid category ID' });
-        }
-
-        const categoryData = await Category.findById(categoryId);
-        if (!categoryData) {
-            return res.status(400).json({ message: 'Category not found' });
-        }
-
-        if (seller && !mongoose.Types.ObjectId.isValid(seller)) {
-            return res.status(400).json({ message: 'Invalid seller ID' });
-        }
-
         // Find the product by ID
         const product = await Product.findById(id);
         if (!product) {
             return res.status(404).json({ message: 'Product not found' });
+        }
+
+        // Find the category by ID
+        const categoryData = await Category.findById(categoryId);
+        if (!categoryData) {
+            return res.status(400).json({ message: 'Category not found' });
         }
 
         // Handle image uploads and updates
@@ -178,14 +170,22 @@ export const updateProduct = async (req, res) => {
         product.images = uploadedImages;
         product.seller = seller || product.seller;
 
-        await product.save();
+        // Save the product and handle version conflicts
+        const updatedProduct = await product.save();
         console.log('success');
-        res.status(200).json(product);
+        res.status(200).json(updatedProduct);
     } catch (error) {
-        console.error('Error updating product:', error);
-        res.status(400).json({ message: error.message });
+        if (error.name === 'VersionError') {
+            // Handle version conflict error
+            console.error('Version conflict error:', error);
+            res.status(409).json({ message: 'Document has been modified by another process' });
+        } else {
+            console.error('Error updating product:', error);
+            res.status(400).json({ message: error.message });
+        }
     }
 };
+
 
 
 
