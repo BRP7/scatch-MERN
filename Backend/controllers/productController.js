@@ -131,46 +131,97 @@ export const getProduct = async (req, res) => {
 };
 
 
+// export const updateProduct = async (req, res) => {
+//     const { id } = req.params;
+//     const { name, description, price, stock, category: categoryId, seller } = req.body;
+//     const images = req.files ? req.files.map(file => file.path) : [];
+
+//     try {
+//         // Find the product by ID
+//         const product = await Product.findById(id);
+//         if (!product) {
+//             return res.status(404).json({ message: 'Product not found' });
+//         }
+
+//         // Find the category by ID
+//         const categoryData = await Category.findById(categoryId);
+//         if (!categoryData) {
+//             return res.status(400).json({ message: 'Category not found' });
+//         }
+
+//         // Handle image uploads and updates
+//         let uploadedImages = product.images; // Preserve existing images
+//         if (images.length > 0) {
+//             // Upload new images to Cloudinary
+//             const newImages = await Promise.all(images.map(async (imagePath) => {
+//                 const result = await cloudinary.uploader.upload(imagePath);
+//                 return result.secure_url; // URL of the uploaded image
+//             }));
+//             uploadedImages = [...uploadedImages, ...newImages];
+//         }
+
+//         // Update product details
+//         product.name = name || product.name;
+//         product.description = description || product.description;
+//         product.price = price || product.price;
+//         product.stock = stock || product.stock;
+//         product.category = categoryData._id;
+//         product.images = uploadedImages;
+//         product.seller = seller || product.seller;
+
+//         // Save the product and handle version conflicts
+//         const updatedProduct = await product.save();
+//         res.status(200).json(updatedProduct);
+//     } catch (error) {
+//         if (error.name === 'VersionError') {
+//             // Handle version conflict error
+//             console.error('Version conflict error:', error);
+//             res.status(409).json({ message: 'Document has been modified by another process' });
+//         } else {
+//             console.error('Error updating product:', error);
+//             res.status(400).json({ message: error.message });
+//         }
+//     }
+// };
+
+
 export const updateProduct = async (req, res) => {
     const { id } = req.params;
     const { name, description, price, stock, category: categoryId, seller } = req.body;
     const images = req.files ? req.files.map(file => file.path) : [];
 
     try {
-        // Find the product by ID
-        const product = await Product.findById(id);
-        if (!product) {
-            return res.status(404).json({ message: 'Product not found' });
-        }
-
         // Find the category by ID
         const categoryData = await Category.findById(categoryId);
         if (!categoryData) {
             return res.status(400).json({ message: 'Category not found' });
         }
 
+        // Prepare the update fields
+        let updateFields = {
+            name,
+            description,
+            price,
+            stock,
+            category: categoryData._id,
+            seller
+        };
+
         // Handle image uploads and updates
-        let uploadedImages = product.images; // Preserve existing images
         if (images.length > 0) {
-            // Upload new images to Cloudinary
             const newImages = await Promise.all(images.map(async (imagePath) => {
                 const result = await cloudinary.uploader.upload(imagePath);
                 return result.secure_url; // URL of the uploaded image
             }));
-            uploadedImages = [...uploadedImages, ...newImages];
+            updateFields.images = [...(await Product.findById(id)).images, ...newImages];
         }
 
-        // Update product details
-        product.name = name || product.name;
-        product.description = description || product.description;
-        product.price = price || product.price;
-        product.stock = stock || product.stock;
-        product.category = categoryData._id;
-        product.images = uploadedImages;
-        product.seller = seller || product.seller;
+        // Update the product
+        const updatedProduct = await Product.findByIdAndUpdate(id, updateFields, { new: true, runValidators: true });
+        if (!updatedProduct) {
+            return res.status(404).json({ message: 'Product not found' });
+        }
 
-        // Save the product and handle version conflicts
-        const updatedProduct = await product.save();
         res.status(200).json(updatedProduct);
     } catch (error) {
         if (error.name === 'VersionError') {
