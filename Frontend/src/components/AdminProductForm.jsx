@@ -77,7 +77,6 @@ const AdminProductForm = ({ onProductSaved }) => {
         if (name === 'images') {
             setFormData({ ...formData, [name]: files[0] });
         } else {
-            // Ensure that category is treated as a string
             if (name === 'category' && typeof value !== 'string') {
                 console.error('Category value should be a string');
             }
