@@ -74,7 +74,7 @@ export const getPaginatedProducts = async (req, res) => {
 
 export const getAllProductsForAdmin = async (req, res) => {
     try {
-        const products = await Product.find(); // Fetch all products
+        const products = await Product.find();
         res.json({ products });
     } catch (error) {
         res.status(500).json({ message: 'Error fetching products' });
@@ -185,55 +185,48 @@ export const getProduct = async (req, res) => {
 // };
 
 
+
+
 export const updateProduct = async (req, res) => {
     const { id } = req.params;
     const { name, description, price, stock, category: categoryId, seller } = req.body;
-    const images = req.files ? req.files.map(file => file.path) : [];
+    const image = req.file ? req.file.path : null; // Use req.file.path for single image
 
     try {
-        // Find the category by ID
+        const product = await Product.findById(id);
+        if (!product) {
+            return res.status(404).json({ message: 'Product not found' });
+        }
+
         const categoryData = await Category.findById(categoryId);
         if (!categoryData) {
             return res.status(400).json({ message: 'Category not found' });
         }
 
-        // Prepare the update fields
-        let updateFields = {
-            name,
-            description,
-            price,
-            stock,
-            category: categoryData._id,
-            seller
-        };
-
-        // Handle image uploads and updates
-        if (images.length > 0) {
-            const newImages = await Promise.all(images.map(async (imagePath) => {
-                const result = await cloudinary.uploader.upload(imagePath);
-                return result.secure_url; // URL of the uploaded image
-            }));
-            updateFields.images = [...(await Product.findById(id)).images, ...newImages];
+        let updatedImages = [...product.images];
+        if (image) {
+            // Upload the new image to Cloudinary
+            const result = await cloudinary.uploader.upload(image);
+            updatedImages = [result.secure_url]; // Replace with the new image
         }
 
-        // Update the product
-        const updatedProduct = await Product.findByIdAndUpdate(id, updateFields, { new: true, runValidators: true });
-        if (!updatedProduct) {
-            return res.status(404).json({ message: 'Product not found' });
-        }
+        product.name = name || product.name;
+        product.description = description || product.description;
+        product.price = price || product.price;
+        product.stock = stock || product.stock;
+        product.category = categoryData._id;
+        product.images = updatedImages;
+        product.seller = seller || product.seller;
 
+        const updatedProduct = await product.save();
         res.status(200).json(updatedProduct);
     } catch (error) {
-        if (error.name === 'VersionError') {
-            // Handle version conflict error
-            console.error('Version conflict error:', error);
-            res.status(409).json({ message: 'Document has been modified by another process' });
-        } else {
-            console.error('Error updating product:', error);
-            res.status(400).json({ message: error.message });
-        }
+        console.error('Error updating product:', error);
+        res.status(400).json({ message: error.message });
     }
 };
+
+
 
 
 
