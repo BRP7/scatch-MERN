@@ -190,41 +190,41 @@ export const getProduct = async (req, res) => {
 export const updateProduct = async (req, res) => {
     const { id } = req.params;
     const { name, description, price, stock, category: categoryId, seller } = req.body;
-    const image = req.file ? req.file.path : null; // Use req.file.path for single image
+    const images = req.files ? req.files.map(file => file.path) : [];
 
     try {
+        // Find the existing product
         const product = await Product.findById(id);
         if (!product) {
             return res.status(404).json({ message: 'Product not found' });
         }
 
-        const categoryData = await Category.findById(categoryId);
-        if (!categoryData) {
-            return res.status(400).json({ message: 'Category not found' });
-        }
-
-        let updatedImages = [...product.images];
-        if (image) {
-            // Upload the new image to Cloudinary
-            const result = await cloudinary.uploader.upload(image);
-            updatedImages = [result.secure_url]; // Replace with the new image
-        }
-
+        // Update fields
         product.name = name || product.name;
         product.description = description || product.description;
         product.price = price || product.price;
         product.stock = stock || product.stock;
-        product.category = categoryData._id;
-        product.images = updatedImages;
+        product.category = categoryId || product.category;
         product.seller = seller || product.seller;
 
-        const updatedProduct = await product.save();
-        res.status(200).json(updatedProduct);
+        // Upload new images if provided
+        if (images.length > 0) {
+            const uploadedImages = await Promise.all(images.map(async (imagePath) => {
+                const result = await cloudinary.uploader.upload(imagePath);
+                return result.secure_url;
+            }));
+            product.images = uploadedImages; // Update with new images
+        }
+
+        // Save the updated product
+        await product.save();
+
+        res.status(200).json(product);
     } catch (error) {
-        console.error('Error updating product:', error);
-        res.status(400).json({ message: error.message });
+        res.status(500).json({ message: error.message });
     }
 };
+
 
 
 
