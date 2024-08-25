@@ -118,10 +118,7 @@ const AdminProductForm = ({ onProductSaved }) => {
             console.error('Error response data:', error);
             setMessage('Error saving product: ' + (error.response?.data?.message || 'Server error'));
         }
-    };
-    
-    
-    
+    };    
 
     return (
         <div className="flex items-center justify-center min-h-screen bg-dark-gradient relative">
