@@ -193,19 +193,15 @@ export const updateProduct = async (req, res) => {
     const images = req.files ? req.files.map(file => file.path) : [];
 
     try {
-        // Find the existing product
-        const product = await Product.findById(id);
-        if (!product) {
-            return res.status(404).json({ message: 'Product not found' });
-        }
-
-        // Update fields
-        product.name = name || product.name;
-        product.description = description || product.description;
-        product.price = price || product.price;
-        product.stock = stock || product.stock;
-        product.category = categoryId || product.category;
-        product.seller = seller || product.seller;
+        // Prepare the fields to update
+        const updateFields = {
+            ...(name && { name }),
+            ...(description && { description }),
+            ...(price && { price }),
+            ...(stock && { stock }),
+            ...(categoryId && { category: categoryId }),
+            ...(seller && { seller }),
+        };
 
         // Upload new images if provided
         if (images.length > 0) {
@@ -213,17 +209,22 @@ export const updateProduct = async (req, res) => {
                 const result = await cloudinary.uploader.upload(imagePath);
                 return result.secure_url;
             }));
-            product.images = uploadedImages; // Update with new images
+            updateFields.images = uploadedImages; // Update with new images
         }
 
-        // Save the updated product
-        await product.save();
+        // Find the product by ID and update
+        const updatedProduct = await Product.findByIdAndUpdate(id, updateFields, { new: true });
 
-        res.status(200).json(product);
+        if (!updatedProduct) {
+            return res.status(404).json({ message: 'Product not found' });
+        }
+
+        res.status(200).json(updatedProduct);
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
 };
+
 
 
 
