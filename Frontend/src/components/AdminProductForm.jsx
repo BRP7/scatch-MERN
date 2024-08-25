@@ -113,7 +113,6 @@ const AdminProductForm = ({ onProductSaved }) => {
                 });
                 setMessage('Product added successfully!');
             }
-            // onProductSaved();
             navigate('/admin/products');
         } catch (error) {
             console.error('Error response data:', error);
