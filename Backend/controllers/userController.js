@@ -25,7 +25,7 @@ export const getProfile = async (req, res) => {
 };
 
 export const updateProfile = async (req, res) => {
-  const { name, phoneNumber, address } = req.body; // Destructure name, phoneNumber, and address from req.body
+  const { name, phoneNumber, address } = req.body; // Destructure 
 
   try {
     let user = await User.findById(req.user.id);
