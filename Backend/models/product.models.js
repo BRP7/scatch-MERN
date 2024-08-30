@@ -24,7 +24,7 @@ const productSchema = mongoose.Schema({
         ref: 'Category',
         required: true
     },
-    images: [String],  
+    images: [String],  // Array of image URLs
     reviews: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Review'
