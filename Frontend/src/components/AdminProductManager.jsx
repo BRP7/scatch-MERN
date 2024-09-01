@@ -79,9 +79,9 @@ const AdminProductManager = () => {
                 <td className="py-2 px-4 border-b border-gold">
                   <Link
                     to={`/admin/product/edit/${product._id}`}
-                    className="text-gold hover:underline"
+                    className="text-gold hover:underline mr-4"
                   >
-                    Edit
+                    Edit 
                   </Link>
                   <button
                     onClick={() => handleDelete(product._id)}
