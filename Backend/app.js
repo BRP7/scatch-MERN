@@ -8,7 +8,8 @@ import userRoutes from './routes/user.routes.js';
 import productRoutes from './routes/product.routes.js';
 import connectDB from './db/connectDB.js';
 import sellerRoutes from './routes/seller.routes.js';
-import categoryRouter from './routes/category.router.js'
+import categoryRouter from './routes/category.router.js';
+import cartRoutes from './routes/cart.routes.js';
 dotenv.config();
 
 const app = express();
@@ -44,8 +45,8 @@ app.use('/api/users', userRoutes);
 app.use('/api/product', productRoutes);
 app.use('/api/sellers', sellerRoutes);
 app.use('/api/categories', categoryRouter);
+app.use('/api/cart', cartRoutes);
 // app.use('/api/addtocart', addToCartRouter);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
-    
