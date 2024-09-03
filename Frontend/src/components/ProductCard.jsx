@@ -1,25 +1,37 @@
+// ProductCard.js
 import React from 'react';
 import { HeartIcon, ShoppingCartIcon } from '@heroicons/react/24/solid';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
-const ProductCard = ({ id, title, price, imageUrl, handleAddToCart, handleAddToWishlist }) => {
+const ProductCard = ({ id, title, price, imageUrl, handleAddToWishlist }) => {
   const navigate = useNavigate();
 
   const handleClick = () => {
-    navigate(`/product/${id}`); // Use 'id' to navigate to the product detail page
+    navigate(`/product/${id}`);
+  };
+
+  const handleAddToCart = async () => {
+    try {
+      const response = await axios.post(
+        'http://localhost:5000/api/cart/add',
+        { productId: id, quantity: 1 },
+        { withCredentials: true } // Ensure cookies are sent with the request
+      );
+      console.log('Added to cart:', response.data);
+    } catch (error) {
+      console.error('Error adding to cart:', error);
+    }
   };
 
   return (
     <div className="relative bg-black text-white border border-gold rounded-lg overflow-hidden flex flex-col h-[400px]" onClick={handleClick}>
-      {/* Wishlist Icon */}
       <button
         onClick={(e) => { e.stopPropagation(); handleAddToWishlist(); }}
         className="absolute top-3 right-3 text-gray-500 hover:text-gold transition-colors"
       >
         <HeartIcon className="w-6 h-6" />
       </button>
-
-      {/* Product Image */}
       <div className="w-full h-2/3 flex items-center justify-center bg-black overflow-hidden">
         {imageUrl ? (
           <img
@@ -27,7 +39,7 @@ const ProductCard = ({ id, title, price, imageUrl, handleAddToCart, handleAddToW
             alt={title}
             className="w-full h-full object-cover"
             style={{ display: 'block' }}
-            onError={(e) => e.target.style.display = 'none'} // Hide broken image
+            onError={(e) => e.target.style.display = 'none'}
           />
         ) : (
           <div className="w-full h-full flex items-center justify-center bg-transparent">
@@ -35,8 +47,6 @@ const ProductCard = ({ id, title, price, imageUrl, handleAddToCart, handleAddToW
           </div>
         )}
       </div>
-
-      {/* Product Details */}
       <div className="p-4 flex flex-col flex-grow justify-between">
         <h2 className="text-xl font-semibold mb-2">{title}</h2>
         <div className="flex items-center justify-between">

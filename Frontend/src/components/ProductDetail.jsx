@@ -8,7 +8,8 @@ const ProductDetail = () => {
   const { id } = useParams();
   const [product, setProduct] = useState(null);
   const [error, setError] = useState('');
-  const [showModal, setShowModal] = useState(false); 
+  const [showModal, setShowModal] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false); // Assume you have authentication status
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -22,6 +23,27 @@ const ProductDetail = () => {
 
     fetchProduct();
   }, [id]);
+
+  const handleAddToCart = async () => {
+    if (!isAuthenticated) {
+      // Redirect to login or show a message
+      return;
+    }
+
+    try {
+      await axios.post(`http://localhost:5000/api/cart/add`, {
+        productId: id,
+        quantity: 1 // Adjust as needed
+      }, {
+        withCredentials: true // Ensure cookies are sent with request
+      });
+
+      alert('Product added to cart');
+    } catch (error) {
+      console.error('Error adding product to cart:', error);
+      alert('Failed to add product to cart');
+    }
+  };
 
   if (error) return <p>{error}</p>;
   if (!product) return <p>Loading...</p>;
@@ -64,7 +86,7 @@ const ProductDetail = () => {
             <div className="flex items-center mb-6">
               <button
                 className="lux-button flex items-center mr-4"
-                // Implement your add to cart functionality
+                onClick={handleAddToCart}
               >
                 <ShoppingCartIcon className="w-5 h-5 mr-2" />
                 Add to Cart
