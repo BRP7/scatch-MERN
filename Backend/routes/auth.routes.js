@@ -10,4 +10,3 @@ router.post('/reset-password', resetPassword);
 router.post('/logout', logout); 
 
 export default router;
-// createAdmin();
