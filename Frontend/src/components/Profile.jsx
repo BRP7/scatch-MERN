@@ -136,24 +136,23 @@ const Profile = () => {
   const displayAddress = addressLine.trim() || "Not provided";
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-dark-gradient relative">
-      <div className="absolute inset-0 sparkle-dust"></div>
-      <div className="profile-container mx-auto px-4 py-8 bg-black text-gold rounded-lg shadow-md border border-gold max-w-4xl mt-16 relative z-10">
+    <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-gray-900 to-black text-white">
+      <div className="profile-container mx-auto px-6 py-10  text-gray-300 rounded-lg shadow-xl border bg-black max-w-4xl mt-12 relative">
         <div className="flex items-center justify-between mb-8">
           <div className="flex items-center">
-            <div className="rounded-full h-16 w-16 bg-gold flex items-center justify-center">
+            <div className="rounded-full h-16 w-16 bg-gradient-to-r from-yellow-500 to-yellow-600 flex items-center justify-center">
               <span className="text-xl font-semibold text-black">
                 {user.name.charAt(0)}
               </span>
             </div>
             <div className="ml-4">
-              <h2 className="text-2xl font-bold text-gold">{user.name}</h2>
-              <p className="text-gold">{user.email}</p>
+              <h2 className="text-2xl font-bold text-gray-100">{user.name}</h2>
+              <p className="text-gray-400">{user.email}</p>
             </div>
           </div>
           <div className="flex space-x-4">
             <button
-              className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg"
+              className="bg-gradient-to-r from-red-600 to-red-700 hover:from-red-500 hover:to-red-600 text-white px-5 py-2 rounded-lg font-semibold"
               onClick={handleLogout}
             >
               Logout
@@ -161,129 +160,138 @@ const Profile = () => {
           </div>
         </div>
 
-        <div className="bg-black rounded-lg shadow-md p-6 mb-8 border border-gold">
-          <h3 className="text-xl font-bold">Your Details</h3>
+        <div className="bg-black rounded-lg shadow-md p-6 mb-8 border bg-black">
+          <h3 className="text-xl font-bold text-gray-100">Your Details</h3>
           {editMode ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
               <div>
-                <label className="text-gold mb-2 block">
+                <label className="text-gray-400 mb-2 block">
                   Name:
                   <input
                     type="text"
                     name="name"
                     value={formData.name}
                     onChange={handleInputChange}
-                    className="border-b border-gold px-3 py-2 rounded-md w-full mt-1 bg-black text-gold focus:outline-none focus:border-gold"
+                    className="border-b border-gray-400 px-3 py-2 mt-1 bg-transparent text-gray-100 focus:outline-none focus:border-yellow-500"
                   />
                 </label>
-                <label className="text-gold mb-2 block">
+                <label className="text-gray-400 mb-2 block">
                   Phone Number:
                   <input
                     type="text"
                     name="phoneNumber"
                     value={formData.phoneNumber}
                     onChange={handleInputChange}
-                    className="border-b border-gold px-3 py-2 rounded-md w-full mt-1 bg-black text-gold focus:outline-none focus:border-gold"
+                    className="border-b border-gray-400 px-3 py-2 mt-1 bg-transparent text-gray-100 focus:outline-none focus:border-yellow-500"
                   />
                 </label>
               </div>
               <div>
-                <label className="text-gold mb-2 block">
+                <label className="text-gray-400 mb-2 block">
                   Email:
                   <input
                     type="email"
                     name="email"
                     value={formData.email}
                     onChange={handleInputChange}
-                    className="border-b border-gold px-3 py-2 rounded-md w-full mt-1 bg-black text-gold focus:outline-none focus:border-gold"
+                    className="border-b border-gray-400 px-3 py-2 mt-1 bg-transparent text-gray-100 focus:outline-none focus:border-yellow-500"
                   />
                 </label>
-                <label className="text-gold mb-2 block">
+                <label className="text-gray-400 mb-2 block">
                   Street:
                   <input
                     type="text"
                     name="address.street"
                     value={formData.address.street}
                     onChange={handleInputChange}
-                    className="border-b border-gold px-3 py-2 rounded-md w-full mt-1 bg-black text-gold focus:outline-none focus:border-gold"
+                    className="border-b border-gray-400 px-3 py-2 mt-1 bg-transparent text-gray-100 focus:outline-none focus:border-yellow-500"
                   />
                 </label>
-                <label className="text-gold mb-2 block">
+                <label className="text-gray-400 mb-2 block">
                   City:
                   <input
                     type="text"
                     name="address.city"
                     value={formData.address.city}
                     onChange={handleInputChange}
-                    className="border-b border-gold px-3 py-2 rounded-md w-full mt-1 bg-black text-gold focus:outline-none focus:border-gold"
+                    className="border-b border-gray-400 px-3 py-2 mt-1 bg-transparent text-gray-100 focus:outline-none focus:border-yellow-500"
                   />
                 </label>
-                <label className="text-gold mb-2 block">
+                <label className="text-gray-400 mb-2 block">
                   State:
                   <input
                     type="text"
                     name="address.state"
                     value={formData.address.state}
                     onChange={handleInputChange}
-                    className="border-b border-gold px-3 py-2 rounded-md w-full mt-1 bg-black text-gold focus:outline-none focus:border-gold"
+                    className="border-b border-gray-400 px-3 py-2 mt-1 bg-transparent text-gray-100 focus:outline-none focus:border-yellow-500"
                   />
                 </label>
-                <label className="text-gold mb-2 block">
+                <label className="text-gray-400 mb-2 block">
                   Country:
                   <input
                     type="text"
                     name="address.country"
                     value={formData.address.country}
                     onChange={handleInputChange}
-                    className="border-b border-gold px-3 py-2 rounded-md w-full mt-1 bg-black text-gold focus:outline-none focus:border-gold"
+                    className="border-b border-gray-400 px-3 py-2 mt-1 bg-transparent text-gray-100 focus:outline-none focus:border-yellow-500"
                   />
                 </label>
-                <label className="text-gold mb-2 block">
+                <label className="text-gray-400 mb-2 block">
                   Zip Code:
                   <input
                     type="text"
                     name="address.zipCode"
                     value={formData.address.zipCode}
                     onChange={handleInputChange}
-                    className="border-b border-gold px-3 py-2 rounded-md w-full mt-1 bg-black text-gold focus:outline-none focus:border-gold"
+                    className="border-b border-gray-400 px-3 py-2 mt-1 bg-transparent text-gray-100 focus:outline-none focus:border-yellow-500"
                   />
                 </label>
               </div>
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
               <div>
-                <p className="text-gold mb-2">
+                <p className="text-gray-400 mb-2">
                   <span className="font-semibold">Name:</span> {user.name}
                 </p>
-                <p className="text-gold mb-2">
-                  <span className="font-semibold">Phone:</span>{" "}
-                  {user.phoneNumber}
-                </p>
-                <p className="text-gold mb-2">
-                  <span className="font-semibold">Email:</span> {user.email}
+                <p className="text-gray-400 mb-2">
+                  <span className="font-semibold">Phone Number:</span>{" "}
+                  {user.phoneNumber || "Not provided"}
                 </p>
               </div>
               <div>
-                <p className="text-gold mb-2">
+                <p className="text-gray-400 mb-2">
+                  <span className="font-semibold">Email:</span> {user.email}
+                </p>
+                <p className="text-gray-400 mb-2">
                   <span className="font-semibold">Address:</span>{" "}
                   {displayAddress}
                 </p>
               </div>
             </div>
           )}
-          <div className="mt-4 text-right">
+
+          <div className="mt-6 flex justify-end space-x-4">
             {editMode ? (
-              <button
-                onClick={handleSave}
-                className="bg-gold hover:bg-gold-dark text-black px-4 py-2 rounded-lg"
-              >
-                Save
-              </button>
+              <>
+                <button
+                  className="bg-gradient-to-r from-yellow-600 to-yellow-700 hover:from-yellow-500 hover:to-yellow-600 text-black px-5 py-2 rounded-lg font-semibold"
+                  onClick={handleSave}
+                >
+                  Save
+                </button>
+                <button
+                  className="bg-gray-600 hover:bg-gray-700 text-white px-5 py-2 rounded-lg font-semibold"
+                  onClick={toggleEditMode}
+                >
+                  Cancel
+                </button>
+              </>
             ) : (
               <button
+                className="bg-gradient-to-r from-yellow-600 to-yellow-700 hover:from-yellow-500 hover:to-yellow-600 text-black px-5 py-2 rounded-lg font-semibold"
                 onClick={toggleEditMode}
-                className="bg-gold hover:bg-gold-dark text-black px-4 py-2 rounded-lg"
               >
                 Edit Profile
               </button>
@@ -291,30 +299,38 @@ const Profile = () => {
           </div>
         </div>
 
-        <div className="bg-black rounded-lg shadow-md p-6 border border-gold">
-          <h3 className="text-xl font-bold mb-4">Your Orders</h3>
-          {orders.length > 0 ? (
-            <ul>
-              {orders.map((order) => (
-                <li key={order._id} className="mb-4">
-                  <div className="border border-gold rounded-lg p-4 bg-black">
-                    <h4 className="text-lg font-bold text-gold">
-                      Order ID: {order._id}
-                    </h4>
-                    <p className="text-gold">
-                      Date: {new Date(order.date).toLocaleDateString()}
-                    </p>
-                    <p className="text-gold">
-                      Total: ${order.total.toFixed(2)}
-                    </p>
-                    <p className="text-gold">Status: {order.status}</p>
-                  </div>
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <p className="text-gold">No orders found.</p>
-          )}
+        <div className="bg-black rounded-lg shadow-md p-6 border bg-black">
+          <h3 className="text-xl font-bold text-gray-100 mb-4">Your Orders</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {orders.length === 0 ? (
+              <p className="text-gray-400">No orders found</p>
+            ) : (
+              orders.map((order, index) => (
+                <div
+                  key={index}
+                  className="bg-gray-700 p-4 rounded-lg shadow-md text-gray-300"
+                >
+                  <h4 className="text-lg font-semibold">Order #{index + 1}</h4>
+                  <p className="text-sm">
+                    <span className="font-semibold">Date:</span>{" "}
+                    {new Date(order.createdAt).toLocaleDateString()}
+                  </p>
+                  <p className="text-sm">
+                    <span className="font-semibold">Total:</span> $
+                    {order.totalPrice.toFixed(2)}
+                  </p>
+                  <p className="text-sm">
+                    <span className="font-semibold">Items:</span>{" "}
+                    {order.items.map((item) => item.name).join(", ")}
+                  </p>
+                  <p className="text-sm">
+                    <span className="font-semibold">Status:</span>{" "}
+                    {order.status}
+                  </p>
+                </div>
+              ))
+            )}
+          </div>
         </div>
       </div>
     </div>
