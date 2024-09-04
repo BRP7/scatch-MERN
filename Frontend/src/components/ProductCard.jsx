@@ -6,21 +6,31 @@ import axios from 'axios';
 
 const ProductCard = ({ id, title, price, imageUrl, handleAddToWishlist }) => {
   const navigate = useNavigate();
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   const handleClick = () => {
     navigate(`/product/${id}`);
   };
 
   const handleAddToCart = async () => {
+    if (!isAuthenticated) {
+      console.log(isAuthenticated);
+      navigate('/login');
+      return;
+    }
+
     try {
-      const response = await axios.post(
-        'http://localhost:5000/api/cart/add',
-        { productId: id, quantity: 1 },
-        { withCredentials: true } // Ensure cookies are sent with the request
-      );
-      console.log('Added to cart:', response.data);
+      await axios.post(`http://localhost:5000/api/cart/add`, {
+        productId: id,
+        quantity: 1 // Adjust as needed
+      }, {
+        withCredentials: true // Ensure cookies are sent with request
+      });
+
+      alert('Product added to cart');
     } catch (error) {
-      console.error('Error adding to cart:', error);
+      console.error('Error adding product to cart:', error);
+      alert('Failed to add product to cart');
     }
   };
 

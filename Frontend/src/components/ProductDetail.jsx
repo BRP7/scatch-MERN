@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { HeartIcon, ShoppingCartIcon } from '@heroicons/react/24/solid';
 import ProductImageModal from './ProductImageModal';
 
@@ -9,7 +9,7 @@ const ProductDetail = () => {
   const [product, setProduct] = useState(null);
   const [error, setError] = useState('');
   const [showModal, setShowModal] = useState(false);
-  const [isAuthenticated, setIsAuthenticated] = useState(false); // Assume you have authentication status
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -25,8 +25,10 @@ const ProductDetail = () => {
   }, [id]);
 
   const handleAddToCart = async () => {
+    const navigate = useNavigate();
     if (!isAuthenticated) {
-      // Redirect to login or show a message
+      console.log(isAuthenticated);
+      navigate('/login');
       return;
     }
 
