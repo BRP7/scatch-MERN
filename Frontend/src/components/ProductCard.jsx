@@ -1,13 +1,27 @@
 // ProductCard.js
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { HeartIcon, ShoppingCartIcon } from '@heroicons/react/24/solid';
-import { useNavigate } from 'react-router-dom';
+import { useLocation ,useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
 const ProductCard = ({ id, title, price, imageUrl, handleAddToWishlist }) => {
   const navigate = useNavigate();
+  const location = useLocation();
+
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
+  useEffect(() => {
+    if (isAuthenticated) {
+      const { from, productId } = location.state || {};
+      if (from) {
+        navigate(from);
+      }
+      if (productId) {
+        // Optionally, handle adding the product to the cart again
+        handleAddToCart();
+      }
+    }
+  }, [isAuthenticated, navigate, location.state]);
   const handleClick = () => {
     navigate(`/product/${id}`);
   };
