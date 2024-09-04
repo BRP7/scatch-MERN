@@ -1,23 +1,13 @@
-import React, { createContext, useState, useContext, useEffect } from 'react';
-import axios from 'axios';
+import { createContext, useContext, useState } from 'react';
 
+// Create a context
 const AuthContext = createContext();
 
+// Provider component
 export const AuthProvider = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-  const checkAuthStatus = async () => {
-    try {
-      const response = await axios.get('http://localhost:5000/api/auth/status', { withCredentials: true });
-      setIsAuthenticated(response.status === 200);
-    } catch (error) {
-      setIsAuthenticated(false);
-    }
-  };
-
-  useEffect(() => {
-    checkAuthStatus();
-  }, []);
+  // Optionally, include any logic for authentication
 
   return (
     <AuthContext.Provider value={{ isAuthenticated, setIsAuthenticated }}>
@@ -26,4 +16,11 @@ export const AuthProvider = ({ children }) => {
   );
 };
 
-export const useAuth = () => useContext(AuthContext);
+// Custom hook to use the Auth context
+export const useAuth = () => {
+  const context = useContext(AuthContext);
+  if (!context) {
+    throw new Error('useAuth must be used within an AuthProvider');
+  }
+  return context;
+};

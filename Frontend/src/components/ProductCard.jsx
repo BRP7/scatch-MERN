@@ -1,21 +1,23 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { HeartIcon, ShoppingCartIcon } from '@heroicons/react/24/solid';
 import { useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { useAuth } from './AuthContext';
 
 const ProductCard = ({ id, title, price, imageUrl, handleAddToWishlist }) => {
   const navigate = useNavigate();
   const location = useLocation();
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const { isAuthenticated } = useAuth();
 
   const handleAddToCart = async () => {
     if (!isAuthenticated) {
+      // Redirect to login and pass the current path and productId
       navigate('/login', { state: { from: location.pathname, productId: id } });
       return;
     }
 
     try {
-      await axios.post(`http://localhost:5000/api/cart/add`, {
+      await axios.post('http://localhost:5000/api/cart/add', {
         productId: id,
         quantity: 1
       }, {
