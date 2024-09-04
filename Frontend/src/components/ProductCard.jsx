@@ -29,7 +29,7 @@ const ProductCard = ({ id, title, price, imageUrl, handleAddToWishlist }) => {
   const handleAddToCart = async () => {
     if (!isAuthenticated) {
       console.log(isAuthenticated);
-      navigate('/login');
+      navigate('/login', { state: { from: location.pathname, productId: id } });
       return;
     }
 
