@@ -1,34 +1,15 @@
-// ProductCard.js
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { HeartIcon, ShoppingCartIcon } from '@heroicons/react/24/solid';
-import { useLocation ,useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
 const ProductCard = ({ id, title, price, imageUrl, handleAddToWishlist }) => {
   const navigate = useNavigate();
   const location = useLocation();
-
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-
-  useEffect(() => {
-    if (isAuthenticated) {
-      const { from, productId } = location.state || {};
-      if (from) {
-        navigate(from);
-      }
-      if (productId) {
-        // Optionally, handle adding the product to the cart again
-        handleAddToCart();
-      }
-    }
-  }, [isAuthenticated, navigate, location.state]);
-  const handleClick = () => {
-    navigate(`/product/${id}`);
-  };
 
   const handleAddToCart = async () => {
     if (!isAuthenticated) {
-      console.log(isAuthenticated);
       navigate('/login', { state: { from: location.pathname, productId: id } });
       return;
     }
@@ -36,9 +17,9 @@ const ProductCard = ({ id, title, price, imageUrl, handleAddToWishlist }) => {
     try {
       await axios.post(`http://localhost:5000/api/cart/add`, {
         productId: id,
-        quantity: 1 // Adjust as needed
+        quantity: 1
       }, {
-        withCredentials: true // Ensure cookies are sent with request
+        withCredentials: true
       });
 
       alert('Product added to cart');
@@ -46,6 +27,10 @@ const ProductCard = ({ id, title, price, imageUrl, handleAddToWishlist }) => {
       console.error('Error adding product to cart:', error);
       alert('Failed to add product to cart');
     }
+  };
+
+  const handleClick = () => {
+    navigate(`/product/${id}`);
   };
 
   return (
