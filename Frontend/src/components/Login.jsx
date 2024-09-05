@@ -9,7 +9,7 @@ const Login = () => {
   const [error, setError] = useState('');
   const navigate = useNavigate();
   const location = useLocation();
-  const { setIsAuthenticated } = useAuth(); // Ensure this is correctly used
+  const { setIsAuthenticated } = useAuth();
   console.log('useAuth:', { setIsAuthenticated }); 
 
 
