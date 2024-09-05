@@ -10,7 +10,7 @@ const Login = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { setIsAuthenticated } = useAuth(); // Ensure this is correctly used
-  console.log('useAuth:', { setIsAuthenticated }); // Check if this logs correctly
+  console.log('useAuth:', { setIsAuthenticated }); 
 
 
   const handleLogin = async (e) => {
