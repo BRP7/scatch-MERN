@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { ShoppingCartIcon } from '@heroicons/react/24/solid';
 
 const Navbar = () => {
   return (
@@ -11,14 +12,15 @@ const Navbar = () => {
           </Link>
         </div>
         <div className="flex items-center">
-          <Link to="/shop" className="text-white hover:text-gold mx-4">
-            Shop
-          </Link>
           <Link to="/about" className="text-white hover:text-gold mx-4">
             About
           </Link>
           <Link to="/contact" className="text-white hover:text-gold mx-4">
             Contact
+          </Link>
+          {/* Shopping Cart Icon */}
+          <Link to="/cart" className="text-white hover:text-gold mx-4 flex items-center">
+            <ShoppingCartIcon className="h-6 w-6" />
           </Link>
         </div>
       </div>
