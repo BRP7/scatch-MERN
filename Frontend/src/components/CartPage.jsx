@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { CheckIcon, XMarkIcon } from '@heroicons/react/24/solid'; // Ensure correct path
+import { CheckIcon, XMarkIcon } from '@heroicons/react/24/solid';
 
 const CartPage = () => {
   const [cartItems, setCartItems] = useState([]);
@@ -8,7 +8,7 @@ const CartPage = () => {
   const [error, setError] = useState(null);
   const [editableItem, setEditableItem] = useState(null);
   const [tempQuantities, setTempQuantities] = useState({});
-  const [validationMessage, setValidationMessage] = useState('');
+  const [validationMessages, setValidationMessages] = useState({});
 
   useEffect(() => {
     const fetchCartItems = async () => {
@@ -41,7 +41,8 @@ const CartPage = () => {
         )
       );
       setEditableItem(null);
-      setValidationMessage('');
+      setTempQuantities({});
+      setValidationMessages({});
     } catch (error) {
       console.error('Failed to update quantity:', error);
       alert('Failed to update quantity.');
@@ -50,41 +51,66 @@ const CartPage = () => {
 
   const handleDecrease = (item) => {
     if (item.quantity > 1) {
+      const newQuantity = item.quantity - 1;
       setTempQuantities((prev) => ({
         ...prev,
-        [item.product._id]: item.quantity - 1
+        [item.product._id]: newQuantity
       }));
-      setEditableItem(item.product._id);
-      setValidationMessage('');
+      validateQuantity(item.product._id, newQuantity);
     }
   };
 
   const handleIncrease = (item) => {
     if (item.quantity < item.product.stock) {
+      const newQuantity = item.quantity + 1;
       setTempQuantities((prev) => ({
         ...prev,
-        [item.product._id]: item.quantity + 1
+        [item.product._id]: newQuantity
       }));
-      setEditableItem(item.product._id);
-      setValidationMessage('');
+      validateQuantity(item.product._id, newQuantity);
     } else {
-      setValidationMessage('Stock limit reached.');
+      setValidationMessages((prev) => ({
+        ...prev,
+        [item.product._id]: 'Stock limit reached.'
+      }));
+    }
+  };
+
+  const validateQuantity = (itemId, quantity) => {
+    if (quantity <= 0) {
+      setValidationMessages((prev) => ({
+        ...prev,
+        [itemId]: 'Quantity must be greater than 0.'
+      }));
+    } else if (quantity > cartItems.find(item => item.product._id === itemId).product.stock) {
+      setValidationMessages((prev) => ({
+        ...prev,
+        [itemId]: 'Stock limit reached.'
+      }));
+    } else {
+      setValidationMessages((prev) => ({
+        ...prev,
+        [itemId]: ''
+      }));
     }
   };
 
   const handleSave = async (item) => {
     const newQuantity = tempQuantities[item.product._id] || item.quantity;
-    if (newQuantity >= 1 && newQuantity <= item.product.stock) {
+    if (newQuantity > 0 && newQuantity <= item.product.stock) {
       await handleQuantityChange(item.product._id, newQuantity);
     } else {
-      alert('Invalid quantity.');
+      setValidationMessages((prev) => ({
+        ...prev,
+        [item.product._id]: 'Invalid quantity.'
+      }));
     }
   };
 
   const handleDiscard = () => {
     setTempQuantities({});
     setEditableItem(null);
-    setValidationMessage('');
+    setValidationMessages({});
   };
 
   if (loading) return <p>Loading...</p>;
@@ -171,14 +197,14 @@ const CartPage = () => {
                         </div>
                       )}
                     </div>
+                    {validationMessages[item.product._id] && (
+                      <p className="text-red-500 mt-2">{validationMessages[item.product._id]}</p>
+                    )}
                   </div>
                   <p className="text-lg font-bold text-gold ml-4">
                     ${item.product.price}
                   </p>
                 </div>
-                {validationMessage && (
-                  <p className="text-red-500 mt-2">{validationMessage}</p>
-                )}
               </li>
             ))}
           </ul>
