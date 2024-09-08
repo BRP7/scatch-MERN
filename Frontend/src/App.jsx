@@ -10,6 +10,7 @@ import AdminProductForm from "./components/AdminProductForm";
 import Menu from "./components/Menu";
 import CategoryForm from "./components/AdminCategoryForm";
 import ProductDetail from './components/ProductDetail';
+import CartPage from './components/CartPage';
 import "./index.css";
 import "./styles.css";
 
@@ -31,6 +32,7 @@ const AppContent = () => {
           <Route path="/admin/products" element={<AdminProductManager />} />
           <Route path="/admin/product/edit/:id" element={<AdminProductForm />} />
           <Route path="/product/:id" element={<ProductDetail />} />
+          <Route path="/cart" element={<CartPage />} />
         </Routes>
       </div>
     </div>
