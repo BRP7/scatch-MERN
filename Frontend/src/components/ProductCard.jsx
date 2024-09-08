@@ -1,86 +1,78 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { ShoppingCartIcon } from '@heroicons/react/24/solid';
+import React from 'react';
+import { HeartIcon, ShoppingCartIcon } from '@heroicons/react/24/solid';
+import { useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { useAuth } from './AuthContext'; // Assuming you have an AuthContext
+import { useAuth } from './AuthContext';
 
-const Navbar = () => {
-  const [cartItems, setCartItems] = useState([]);
-  const [showCart, setShowCart] = useState(false);
-  const { isAuthenticated } = useAuth(); // Auth hook to check if the user is authenticated
+const ProductCard = ({ id, title, price, imageUrl, handleAddToWishlist }) => {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { isAuthenticated } = useAuth();
 
-  const fetchCartItems = async () => {
+  const handleAddToCart = async () => {
     if (!isAuthenticated) {
-      // Redirect to login if not authenticated
-      window.location.href = '/login';
+      // Redirect to login and pass the current path and productId
+      navigate('/login', { state: { from: location.pathname, productId: id } });
       return;
     }
 
     try {
-      const response = await axios.get('http://localhost:5000/api/cart', {
+      await axios.post('http://localhost:5000/api/cart/add', {
+        productId: id,
+        quantity: 1
+      }, {
         withCredentials: true
       });
-      setCartItems(response.data.items); // Adjust according to your response structure
-      setShowCart(true);
+
+      alert('Product added to cart');
     } catch (error) {
-      console.error('Failed to fetch cart items:', error);
-      setShowCart(false);
+      console.error('Error adding product to cart:', error);
+      alert('Failed to add product to cart');
     }
   };
 
-  const handleCartClick = (event) => {
-    event.preventDefault();
-    fetchCartItems();
+  const handleClick = () => {
+    navigate(`/product/${id}`);
   };
 
   return (
-    <nav className="bg-black fixed w-full z-10 top-0 shadow-lg">
-      <div className="container mx-auto px-6 py-3 flex justify-between items-center">
-        <div>
-          <Link to="/" className="text-gold text-2xl font-bold">
-            LuxShop
-          </Link>
-        </div>
-        <div className="flex items-center">
-          <Link to="/about" className="text-white hover:text-gold mx-4">
-            About
-          </Link>
-          <Link to="/contact" className="text-white hover:text-gold mx-4">
-            Contact
-          </Link>
-          {/* Shopping Cart Icon */}
+    <div className="relative bg-black text-white border border-gold rounded-lg overflow-hidden flex flex-col h-[400px]" onClick={handleClick}>
+      <button
+        onClick={(e) => { e.stopPropagation(); handleAddToWishlist(); }}
+        className="absolute top-3 right-3 text-gray-500 hover:text-gold transition-colors"
+      >
+        <HeartIcon className="w-6 h-6" />
+      </button>
+      <div className="w-full h-2/3 flex items-center justify-center bg-black overflow-hidden">
+        {imageUrl ? (
+          <img
+            src={imageUrl}
+            alt={title}
+            className="w-full h-full object-cover"
+            style={{ display: 'block' }}
+            onError={(e) => e.target.style.display = 'none'}
+          />
+        ) : (
+          <div className="w-full h-full flex items-center justify-center bg-transparent">
+            <span className="text-gray-500 text-lg">No Image</span>
+          </div>
+        )}
+      </div>
+      <div className="p-4 flex flex-col flex-grow justify-between">
+        <h2 className="text-xl font-semibold mb-2">{title}</h2>
+        <div className="flex items-center justify-between">
+          <p className="text-lg font-bold text-gold">${price}</p>
           <button
-            onClick={handleCartClick}
-            className="text-white hover:text-gold mx-4 flex items-center"
+            onClick={(e) => { e.stopPropagation(); handleAddToCart(); }}
+            className="lux-button flex items-center"
           >
-            <ShoppingCartIcon className="h-6 w-6" />
+            <ShoppingCartIcon className="w-5 h-5 mr-2" />
+            Add to Cart
           </button>
-          {/* Cart Items Display */}
-          {showCart && (
-            <div className="absolute top-16 right-0 bg-white text-black p-4 shadow-lg rounded-md">
-              <h3 className="font-bold text-lg mb-2">Your Cart</h3>
-              {cartItems.length === 0 ? (
-                <p>Your cart is empty.</p>
-              ) : (
-                <ul>
-                  {cartItems.map((item) => (
-                    <li key={item.product._id} className="mb-2">
-                      <div className="flex justify-between">
-                        <span>{item.product.name}</span>
-                        <span>${item.product.price}</span>
-                      </div>
-                      <span>Quantity: {item.quantity}</span>
-                    </li>
-                  ))}
-                </ul>
-              )}
-              <Link to="/checkout" className="block mt-2 text-blue-500 hover:underline">Checkout</Link>
-            </div>
-          )}
         </div>
       </div>
-    </nav>
+    </div>
   );
 };
 
-export default Navbar;
+export default ProductCard;

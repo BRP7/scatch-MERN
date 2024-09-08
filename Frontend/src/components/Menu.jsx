@@ -1,35 +1,35 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ShoppingCartIcon } from '@heroicons/react/24/solid';
-// import Cookies from 'js-cookie';
 import axios from 'axios';
+import { useAuth } from './AuthContext'; // Assuming you have an AuthContext
 
 const Navbar = () => {
   const [cartItems, setCartItems] = useState([]);
   const [showCart, setShowCart] = useState(false);
+  const { isAuthenticated } = useAuth(); // Auth hook to check if the user is authenticated
 
   const fetchCartItems = async () => {
+    if (!isAuthenticated) {
+      // Redirect to login if not authenticated
+      window.location.href = '/login';
+      return;
+    }
+
     try {
-      // Fetch the JWT from cookies
-      const token = Cookies.get('token');
-      if (!token) {
-        console.error('No token found');
-        return;
-      }
-
-      // Make the API request to get the cart items
-      const response = await axios.get('/api/cart', {
-        headers: { Authorization: `Bearer ${token}` }
+      const response = await axios.get('http://localhost:5000/api/cart', {
+        withCredentials: true
       });
-
       setCartItems(response.data.items); // Adjust according to your response structure
       setShowCart(true);
     } catch (error) {
       console.error('Failed to fetch cart items:', error);
+      setShowCart(false);
     }
   };
 
-  const handleCartClick = () => {
+  const handleCartClick = (event) => {
+    event.preventDefault();
     fetchCartItems();
   };
 
