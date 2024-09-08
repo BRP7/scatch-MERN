@@ -1,86 +1,80 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { ShoppingCartIcon } from '@heroicons/react/24/solid';
+import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useAuth } from './AuthContext'; // Assuming you have an AuthContext
 
-const Navbar = () => {
+const CartPage = () => {
   const [cartItems, setCartItems] = useState([]);
-  const [showCart, setShowCart] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const { isAuthenticated } = useAuth(); // Auth hook to check if the user is authenticated
 
-  const fetchCartItems = async () => {
-    if (!isAuthenticated) {
-      // Redirect to login if not authenticated
-      window.location.href = '/login';
-      return;
-    }
+  useEffect(() => {
+    const fetchCartItems = async () => {
+      if (!isAuthenticated) {
+        window.location.href = '/login'; // Redirect if not authenticated
+        return;
+      }
 
-    try {
-      const response = await axios.get('http://localhost:5000/api/cart', {
-        withCredentials: true
-      });
-      setCartItems(response.data.items); // Adjust according to your response structure
-      setShowCart(true);
-    } catch (error) {
-      console.error('Failed to fetch cart items:', error);
-      setShowCart(false);
-    }
-  };
+      try {
+        const response = await axios.get('http://localhost:5000/api/cart', {
+          withCredentials: true
+        });
+        setCartItems(response.data.items); // Adjust according to your response structure
+      } catch (error) {
+        setError('Failed to fetch cart items');
+        console.error('Failed to fetch cart items:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  const handleCartClick = (event) => {
-    event.preventDefault();
     fetchCartItems();
-  };
+  }, [isAuthenticated]);
+
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p>{error}</p>;
 
   return (
-    <nav className="bg-black fixed w-full z-10 top-0 shadow-lg">
-      <div className="container mx-auto px-6 py-3 flex justify-between items-center">
-        <div>
-          <Link to="/" className="text-gold text-2xl font-bold">
-            LuxShop
-          </Link>
-        </div>
-        <div className="flex items-center">
-          <Link to="/about" className="text-white hover:text-gold mx-4">
-            About
-          </Link>
-          <Link to="/contact" className="text-white hover:text-gold mx-4">
-            Contact
-          </Link>
-          {/* Shopping Cart Icon */}
-          <button
-            onClick={handleCartClick}
-            className="text-white hover:text-gold mx-4 flex items-center"
-          >
-            <ShoppingCartIcon className="h-6 w-6" />
+    <div className="bg-dark-gradient min-h-screen p-5">
+      <header className="text-center p-5 text-gold font-cinzel text-5xl">
+        Your Cart
+      </header>
+      <div className="container mx-auto px-6 py-12">
+        {cartItems.length === 0 ? (
+          <p>Your cart is empty.</p>
+        ) : (
+          <ul className="space-y-4">
+            {cartItems.map((item) => (
+              <li
+                key={item.product._id}
+                className="flex items-center bg-black text-white p-4 rounded-md border border-gold"
+              >
+                <div className="w-1/4">
+                  <img
+                    src={item.product.images && item.product.images[0]} // Adjust if images is an array
+                    alt={item.product.name}
+                    className="w-full h-auto object-cover rounded-md"
+                  />
+                </div>
+                <div className="w-3/4 ml-4 flex justify-between">
+                  <div>
+                    <h2 className="text-xl font-semibold">{item.product.name}</h2>
+                    <p className="text-lg">Quantity: {item.quantity}</p>
+                  </div>
+                  <p className="text-lg font-bold text-gold">${item.product.price}</p>
+                </div>
+              </li>
+            ))}
+          </ul>
+        )}
+        <div className="mt-8 text-center">
+          <button className="lux-button">
+            <a href="/checkout">Proceed to Checkout</a>
           </button>
-          {/* Cart Items Display */}
-          {showCart && (
-            <div className="absolute top-16 right-0 bg-white text-black p-4 shadow-lg rounded-md">
-              <h3 className="font-bold text-lg mb-2">Your Cart</h3>
-              {cartItems.length === 0 ? (
-                <p>Your cart is empty.</p>
-              ) : (
-                <ul>
-                  {cartItems.map((item) => (
-                    <li key={item.product._id} className="mb-2">
-                      <div className="flex justify-between">
-                        <span>{item.product.name}</span>
-                        <span>${item.product.price}</span>
-                      </div>
-                      <span>Quantity: {item.quantity}</span>
-                    </li>
-                  ))}
-                </ul>
-              )}
-              <Link to="/checkout" className="block mt-2 text-blue-500 hover:underline">Checkout</Link>
-            </div>
-          )}
         </div>
       </div>
-    </nav>
+    </div>
   );
 };
 
-export default Navbar;
+export default CartPage;
