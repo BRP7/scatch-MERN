@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useAuth } from './AuthContext';
-import { PencilIcon, CheckIcon, XIcon } from '@heroicons/react/24/solid'; // Import icons for edit, save, and discard
+import { PencilIcon, CheckIcon, XMarkIcon } from '@heroicons/react/24/solid'; // Ensure correct icon names
 
 const CartPage = () => {
   const [cartItems, setCartItems] = useState([]);
@@ -121,11 +121,10 @@ const CartPage = () => {
                   />
                 </div>
                 <div className="w-3/4 ml-4 flex justify-between items-center">
-                  <div className="flex-grow">
+                  <div className="flex-grow flex flex-col">
                     <h2 className="text-xl font-semibold">{item.product.name}</h2>
-                    <p className="text-lg font-bold text-gold">${item.product.price}</p>
                     {editableItem === item.product._id ? (
-                      <div className="flex items-center">
+                      <div className="flex items-start">
                         <input
                           type="number"
                           min="0"
@@ -150,7 +149,7 @@ const CartPage = () => {
                           onClick={() => handleDiscard(item)}
                           className="ml-2 text-red-500 hover:text-red-700"
                         >
-                          <XIcon className="w-6 h-6" />
+                          <XMarkIcon className="w-6 h-6" />
                         </button>
                       </div>
                     ) : (
@@ -177,6 +176,7 @@ const CartPage = () => {
                       </div>
                     )}
                   </div>
+                  <p className="text-lg font-bold text-gold">{item.product.price}</p> {/* Price positioned to the right */}
                 </div>
               </li>
             ))}
