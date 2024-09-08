@@ -1,31 +1,24 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { CheckIcon, XMarkIcon } from '@heroicons/react/24/solid'; // Import icons correctly
-import { useAuth } from './AuthContext'; // Import the custom hook
+import { CheckIcon, XMarkIcon } from '@heroicons/react/24/solid'; // Ensure correct path
 
 const CartPage = () => {
   const [cartItems, setCartItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [editableItem, setEditableItem] = useState(null); // Track the item being edited
-  const [tempQuantities, setTempQuantities] = useState({}); // Track temporary quantities
-  const [validationMessage, setValidationMessage] = useState(''); // Message for stock validation
-  const { isAuthenticated } = useAuth(); // Auth hook to check if the user is authenticated
+  const [editableItem, setEditableItem] = useState(null);
+  const [tempQuantities, setTempQuantities] = useState({});
+  const [validationMessage, setValidationMessage] = useState('');
 
   useEffect(() => {
     const fetchCartItems = async () => {
-      if (!isAuthenticated) {
-        window.location.href = '/login'; // Redirect if not authenticated
-        return;
-      }
-
       try {
         const response = await axios.get('http://localhost:5000/api/cart', {
           withCredentials: true
         });
-        setCartItems(response.data.items || []); // Ensure `items` is not undefined
+        setCartItems(response.data.items || []);
       } catch (error) {
-        setError('Failed to fetch cart items. Please try again later.');
+        setError('Failed to fetch cart items.');
         console.error('Failed to fetch cart items:', error);
       } finally {
         setLoading(false);
@@ -33,7 +26,7 @@ const CartPage = () => {
     };
 
     fetchCartItems();
-  }, [isAuthenticated]);
+  }, []);
 
   const handleQuantityChange = async (itemId, quantity) => {
     try {
@@ -47,60 +40,51 @@ const CartPage = () => {
             : item
         )
       );
-      setEditableItem(null); // Exit editing mode
-      setValidationMessage(''); // Clear any validation messages
+      setEditableItem(null);
+      setValidationMessage('');
     } catch (error) {
       console.error('Failed to update quantity:', error);
-      alert('Failed to update quantity. Please try again.');
+      alert('Failed to update quantity.');
     }
   };
 
   const handleDecrease = (item) => {
-    if (item.quantity > 0) {
-      const newQuantity = item.quantity - 1;
+    if (item.quantity > 1) {
       setTempQuantities((prev) => ({
         ...prev,
-        [item.product._id]: newQuantity
+        [item.product._id]: item.quantity - 1
       }));
       setEditableItem(item.product._id);
-      setValidationMessage(''); // Clear any validation messages
+      setValidationMessage('');
     }
   };
 
   const handleIncrease = (item) => {
     if (item.quantity < item.product.stock) {
-      const newQuantity = item.quantity + 1;
       setTempQuantities((prev) => ({
         ...prev,
-        [item.product._id]: newQuantity
+        [item.product._id]: item.quantity + 1
       }));
       setEditableItem(item.product._id);
-      setValidationMessage(''); // Clear any validation messages
+      setValidationMessage('');
     } else {
-      setValidationMessage('Cannot increase quantity. Stock limit reached.');
+      setValidationMessage('Stock limit reached.');
     }
   };
 
   const handleSave = async (item) => {
     const newQuantity = tempQuantities[item.product._id] || item.quantity;
-    if (newQuantity >= 0 && newQuantity <= item.product.stock) {
+    if (newQuantity >= 1 && newQuantity <= item.product.stock) {
       await handleQuantityChange(item.product._id, newQuantity);
     } else {
-      alert('Invalid quantity. Please enter a value between 0 and the available stock.');
+      alert('Invalid quantity.');
     }
   };
 
-  const handleDiscard = (item) => {
-    setTempQuantities((prev) => {
-      const { [item.product._id]: _, ...rest } = prev;
-      return rest;
-    });
+  const handleDiscard = () => {
+    setTempQuantities({});
     setEditableItem(null);
-    setValidationMessage(''); // Clear any validation messages
-  };
-
-  const handleBlur = (item) => {
-    handleSave(item); // Optionally save changes when input loses focus
+    setValidationMessage('');
   };
 
   if (loading) return <p>Loading...</p>;
@@ -123,7 +107,7 @@ const CartPage = () => {
               >
                 <div className="w-1/4 flex justify-center">
                   <img
-                    src={item.product.images && item.product.images[0]} // Adjust if images is an array
+                    src={item.product.images && item.product.images[0]}
                     alt={item.product.name}
                     className="w-24 h-24 object-cover rounded-md"
                   />
@@ -140,23 +124,7 @@ const CartPage = () => {
                           >
                             -
                           </button>
-                          <input
-                            type="number"
-                            min="0"
-                            max={item.product.stock}
-                            value={tempQuantities[item.product._id] || item.quantity}
-                            onChange={(e) => setTempQuantities((prev) => ({
-                              ...prev,
-                              [item.product._id]: e.target.value
-                            }))}
-                            onBlur={() => handleBlur(item)}
-                            className="w-16 text-center bg-gray-800 text-white border border-gray-600 rounded-md"
-                            onKeyDown={(e) => {
-                              if (!/[0-9]/.test(e.key) && e.key !== 'Backspace' && e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') {
-                                e.preventDefault(); // Prevent non-numeric input
-                              }
-                            }}
-                          />
+                          <span className="mx-2">{tempQuantities[item.product._id] || item.quantity}</span>
                           <button
                             onClick={() => handleIncrease(item)}
                             className="lux-button mx-1"
@@ -170,7 +138,7 @@ const CartPage = () => {
                             <CheckIcon className="w-6 h-6" />
                           </button>
                           <button
-                            onClick={() => handleDiscard(item)}
+                            onClick={handleDiscard}
                             className="ml-2 text-red-500 hover:text-red-700"
                           >
                             <XMarkIcon className="w-6 h-6" />
@@ -191,13 +159,22 @@ const CartPage = () => {
                           >
                             +
                           </button>
+                          <button
+                            onClick={() => {
+                              setEditableItem(item.product._id);
+                              setTempQuantities({ [item.product._id]: item.quantity });
+                            }}
+                            className="ml-2 text-blue-500 hover:text-blue-700"
+                          >
+                            <span>Edit</span>
+                          </button>
                         </div>
                       )}
                     </div>
                   </div>
                   <p className="text-lg font-bold text-gold ml-4">
                     ${item.product.price}
-                  </p> {/* Price positioned to the right */}
+                  </p>
                 </div>
                 {validationMessage && (
                   <p className="text-red-500 mt-2">{validationMessage}</p>
