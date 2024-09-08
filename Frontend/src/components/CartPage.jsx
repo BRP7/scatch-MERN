@@ -1,13 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { useAuth } from './AuthContext';
-import { PencilIcon, CheckIcon, XMarkIcon } from '@heroicons/react/24/solid'; // Ensure correct icon names
+import { CheckIcon, XMarkIcon } from '@heroicons/react/24/solid'; // Import icons correctly
+import { useAuth } from './AuthContext'; // Import the custom hook
 
 const CartPage = () => {
   const [cartItems, setCartItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [editableItem, setEditableItem] = useState(null); // Track the item being edited
+  const [tempQuantities, setTempQuantities] = useState({}); // Track temporary quantities
+  const [validationMessage, setValidationMessage] = useState(''); // Message for stock validation
   const { isAuthenticated } = useAuth(); // Auth hook to check if the user is authenticated
 
   useEffect(() => {
@@ -46,6 +48,7 @@ const CartPage = () => {
         )
       );
       setEditableItem(null); // Exit editing mode
+      setValidationMessage(''); // Clear any validation messages
     } catch (error) {
       console.error('Failed to update quantity:', error);
       alert('Failed to update quantity. Please try again.');
@@ -54,45 +57,50 @@ const CartPage = () => {
 
   const handleDecrease = (item) => {
     if (item.quantity > 0) {
-      handleQuantityChange(item.product._id, item.quantity - 1);
+      const newQuantity = item.quantity - 1;
+      setTempQuantities((prev) => ({
+        ...prev,
+        [item.product._id]: newQuantity
+      }));
+      setEditableItem(item.product._id);
+      setValidationMessage(''); // Clear any validation messages
     }
   };
 
   const handleIncrease = (item) => {
     if (item.quantity < item.product.stock) {
-      handleQuantityChange(item.product._id, item.quantity + 1);
+      const newQuantity = item.quantity + 1;
+      setTempQuantities((prev) => ({
+        ...prev,
+        [item.product._id]: newQuantity
+      }));
+      setEditableItem(item.product._id);
+      setValidationMessage(''); // Clear any validation messages
+    } else {
+      setValidationMessage('Cannot increase quantity. Stock limit reached.');
     }
   };
 
-  const handleEdit = (item) => {
-    setEditableItem(item.product._id);
-  };
-
-  const handleSave = (item) => {
-    const newQuantity = parseInt(item.editableQuantity, 10);
+  const handleSave = async (item) => {
+    const newQuantity = tempQuantities[item.product._id] || item.quantity;
     if (newQuantity >= 0 && newQuantity <= item.product.stock) {
-      handleQuantityChange(item.product._id, newQuantity);
+      await handleQuantityChange(item.product._id, newQuantity);
     } else {
       alert('Invalid quantity. Please enter a value between 0 and the available stock.');
     }
   };
 
-  const handleDiscard = () => {
+  const handleDiscard = (item) => {
+    setTempQuantities((prev) => {
+      const { [item.product._id]: _, ...rest } = prev;
+      return rest;
+    });
     setEditableItem(null);
-  };
-
-  const handleChange = (event, item) => {
-    setCartItems((prevItems) =>
-      prevItems.map((i) =>
-        i.product._id === item.product._id
-          ? { ...i, editableQuantity: event.target.value }
-          : i
-      )
-    );
+    setValidationMessage(''); // Clear any validation messages
   };
 
   const handleBlur = (item) => {
-    handleSave(item); // Save changes when input loses focus
+    handleSave(item); // Optionally save changes when input loses focus
   };
 
   if (loading) return <p>Loading...</p>;
@@ -121,63 +129,79 @@ const CartPage = () => {
                   />
                 </div>
                 <div className="w-3/4 ml-4 flex justify-between items-center">
-                  <div className="flex-grow flex flex-col">
+                  <div className="flex-grow">
                     <h2 className="text-xl font-semibold">{item.product.name}</h2>
-                    {editableItem === item.product._id ? (
-                      <div className="flex items-start">
-                        <input
-                          type="number"
-                          min="0"
-                          max={item.product.stock}
-                          value={item.editableQuantity || item.quantity}
-                          onChange={(e) => handleChange(e, item)}
-                          onBlur={() => handleBlur(item)}
-                          className="w-16 text-center bg-gray-800 text-white border border-gray-600 rounded-md"
-                          onKeyDown={(e) => {
-                            if (!/[0-9]/.test(e.key) && e.key !== 'Backspace' && e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') {
-                              e.preventDefault(); // Prevent non-numeric input
-                            }
-                          }}
-                        />
-                        <button
-                          onClick={() => handleSave(item)}
-                          className="ml-2 text-green-500 hover:text-green-700"
-                        >
-                          <CheckIcon className="w-6 h-6" />
-                        </button>
-                        <button
-                          onClick={() => handleDiscard(item)}
-                          className="ml-2 text-red-500 hover:text-red-700"
-                        >
-                          <XMarkIcon className="w-6 h-6" />
-                        </button>
-                      </div>
-                    ) : (
-                      <div className="flex items-center">
-                        <button
-                          onClick={() => handleDecrease(item)}
-                          className="lux-button mx-1"
-                        >
-                          -
-                        </button>
-                        <span className="mx-2">{item.quantity}</span>
-                        <button
-                          onClick={() => handleIncrease(item)}
-                          className="lux-button mx-1"
-                        >
-                          +
-                        </button>
-                        <button
-                          onClick={() => handleEdit(item)}
-                          className="ml-4 text-blue-500 hover:text-blue-700"
-                        >
-                          <PencilIcon className="w-6 h-6" />
-                        </button>
-                      </div>
-                    )}
+                    <div className="flex items-center mt-2">
+                      {editableItem === item.product._id ? (
+                        <div className="flex items-center">
+                          <button
+                            onClick={() => handleDecrease(item)}
+                            className="lux-button mx-1"
+                          >
+                            -
+                          </button>
+                          <input
+                            type="number"
+                            min="0"
+                            max={item.product.stock}
+                            value={tempQuantities[item.product._id] || item.quantity}
+                            onChange={(e) => setTempQuantities((prev) => ({
+                              ...prev,
+                              [item.product._id]: e.target.value
+                            }))}
+                            onBlur={() => handleBlur(item)}
+                            className="w-16 text-center bg-gray-800 text-white border border-gray-600 rounded-md"
+                            onKeyDown={(e) => {
+                              if (!/[0-9]/.test(e.key) && e.key !== 'Backspace' && e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') {
+                                e.preventDefault(); // Prevent non-numeric input
+                              }
+                            }}
+                          />
+                          <button
+                            onClick={() => handleIncrease(item)}
+                            className="lux-button mx-1"
+                          >
+                            +
+                          </button>
+                          <button
+                            onClick={() => handleSave(item)}
+                            className="ml-2 text-green-500 hover:text-green-700"
+                          >
+                            <CheckIcon className="w-6 h-6" />
+                          </button>
+                          <button
+                            onClick={() => handleDiscard(item)}
+                            className="ml-2 text-red-500 hover:text-red-700"
+                          >
+                            <XMarkIcon className="w-6 h-6" />
+                          </button>
+                        </div>
+                      ) : (
+                        <div className="flex items-center">
+                          <button
+                            onClick={() => handleDecrease(item)}
+                            className="lux-button mx-1"
+                          >
+                            -
+                          </button>
+                          <span className="mx-2">{item.quantity}</span>
+                          <button
+                            onClick={() => handleIncrease(item)}
+                            className="lux-button mx-1"
+                          >
+                            +
+                          </button>
+                        </div>
+                      )}
+                    </div>
                   </div>
-                  <p className="text-lg font-bold text-gold">{item.product.price}</p> {/* Price positioned to the right */}
+                  <p className="text-lg font-bold text-gold ml-4">
+                    ${item.product.price}
+                  </p> {/* Price positioned to the right */}
                 </div>
+                {validationMessage && (
+                  <p className="text-red-500 mt-2">{validationMessage}</p>
+                )}
               </li>
             ))}
           </ul>
