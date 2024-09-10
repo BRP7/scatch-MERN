@@ -186,13 +186,10 @@ const CartPage = () => {
                             +
                           </button>
                           <button
-                            onClick={() => {
-                              setEditableItem(item.product._id);
-                              setTempQuantities({ [item.product._id]: item.quantity });
-                            }}
+                            onClick={() => setEditableItem(item.product._id)}
                             className="ml-2 text-blue-500 hover:text-blue-700"
                           >
-                            <span>Edit</span>
+                            Edit
                           </button>
                         </div>
                       )}

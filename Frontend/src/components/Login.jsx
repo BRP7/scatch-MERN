@@ -26,7 +26,6 @@ const Login = () => {
         console.log('useAuth:', { setIsAuthenticated });
         console.log('useAuth:', { setIsAuthenticated });
 
-        //redirect based on auth path information
         const { from = '/profile', productId } = location.state || {};
         if (productId) {
           navigate(`/product/${productId}`);
