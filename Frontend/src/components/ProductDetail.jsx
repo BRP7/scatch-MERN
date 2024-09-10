@@ -3,13 +3,15 @@ import axios from 'axios';
 import { useNavigate, useParams } from 'react-router-dom';
 import { HeartIcon, ShoppingCartIcon } from '@heroicons/react/24/solid';
 import ProductImageModal from './ProductImageModal';
+import { useAuth } from './AuthContext'; // Ensure this is correctly imported
 
 const ProductDetail = () => {
   const { id } = useParams();
   const [product, setProduct] = useState(null);
   const [error, setError] = useState('');
   const [showModal, setShowModal] = useState(false);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const { isAuthenticated } = useAuth(); // Use authentication context
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -25,15 +27,13 @@ const ProductDetail = () => {
   }, [id]);
 
   const handleAddToCart = async () => {
-    const navigate = useNavigate();
     if (!isAuthenticated) {
-      console.log(isAuthenticated);
-      navigate('/login');
+      navigate('/login', { state: { from: `/product/${id}` } });
       return;
     }
 
     try {
-      await axios.post(`http://localhost:5000/api/cart/add`, {
+      await axios.post('http://localhost:5000/api/cart/add', {
         productId: id,
         quantity: 1 // Adjust as needed
       }, {
