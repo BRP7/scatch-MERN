@@ -3,15 +3,13 @@ import axios from 'axios';
 import { useNavigate, useParams } from 'react-router-dom';
 import { HeartIcon, ShoppingCartIcon } from '@heroicons/react/24/solid';
 import ProductImageModal from './ProductImageModal';
-import { useAuth } from './AuthContext'; // Ensure this is correctly imported
 
 const ProductDetail = () => {
   const { id } = useParams();
   const [product, setProduct] = useState(null);
   const [error, setError] = useState('');
   const [showModal, setShowModal] = useState(false);
-  const { isAuthenticated } = useAuth(); // Use authentication context
-  const navigate = useNavigate();
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -27,13 +25,15 @@ const ProductDetail = () => {
   }, [id]);
 
   const handleAddToCart = async () => {
+    const navigate = useNavigate();
     if (!isAuthenticated) {
-      navigate('/login', { state: { from: `/product/${id}` } });
+      console.log(isAuthenticated);
+      navigate('/login');
       return;
     }
 
     try {
-      await axios.post('http://localhost:5000/api/cart/add', {
+      await axios.post(`http://localhost:5000/api/cart/add`, {
         productId: id,
         quantity: 1 // Adjust as needed
       }, {
@@ -60,11 +60,11 @@ const ProductDetail = () => {
           {/* Product Image Gallery */}
           <div className="w-full md:w-1/2 p-4 flex flex-col items-center">
             <img
-              src={product.images[0]}
+              src={product.images[0]}  // Display the first image
               alt={product.name}
               className="w-full h-auto object-cover cursor-pointer"
               style={{ maxHeight: '500px' }}
-              onClick={() => setShowModal(true)} 
+              onClick={() => setShowModal(true)} // Open modal on click
             />
             {/* Thumbnail Images */}
             <div className="flex mt-4 space-x-2">
