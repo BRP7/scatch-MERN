@@ -95,7 +95,7 @@ const ProductDetail = () => {
               </button>
               <button
                 className="text-gray-500 hover:text-gold transition-colors"
-                // Implement add to wishlist functionality
+                // Implement add to wishlist functionality here
               >
                 <HeartIcon className="w-6 h-6" />
               </button>
