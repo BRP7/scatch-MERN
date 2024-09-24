@@ -110,7 +110,7 @@ const ProductDetail = () => {
                   </div>
                 ))
               ) : (
-                <p className="text-white">No reviews yet...</p>
+                <p className="text-white">No reviews yet.</p>
               )}
             </div>
           </div>
