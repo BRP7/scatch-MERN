@@ -47,6 +47,28 @@ const ProductDetail = () => {
     }
   };
 
+  const handleAddToWishlist = async () => {
+    const navigate = useNavigate();
+    if (!isAuthenticated) {
+      console.log(isAuthenticated);
+      navigate('/login');
+      return;
+    }
+
+    try {
+      await axios.post(`http://localhost:5000/api/wishlist/add`, {
+        productId: id
+      }, {
+        withCredentials: true // Ensure cookies are sent with request
+      });
+
+      alert('Product added to wishlist');
+    } catch (error) {
+      console.error('Error adding product to wishlist:', error);
+      alert('Failed to add product to wishlist');
+    }
+  };
+
   if (error) return <p>{error}</p>;
   if (!product) return <p>Loading...</p>;
 
@@ -95,7 +117,7 @@ const ProductDetail = () => {
               </button>
               <button
                 className="text-gray-500 hover:text-gold transition-colors"
-                // Implement add to wishlist functionality here
+                onClick={handleAddToWishlist}
               >
                 <HeartIcon className="w-6 h-6" />
               </button>
