@@ -188,7 +188,7 @@ const ProductDetail = () => {
     try {
       await axios.post(`http://localhost:5000/api/cart/add`, {
         productId: id,
-        quantity: 1 // Adjust as needed
+        quantity: 1 
       }, {
         withCredentials: true // Ensure cookies are sent with request
       });
