@@ -190,7 +190,7 @@ const ProductDetail = () => {
         productId: id,
         quantity: 1 
       }, {
-        withCredentials: true // Ensure cookies are sent with request
+        withCredentials: true
       });
 
       alert('Product added to cart');
