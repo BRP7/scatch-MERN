@@ -212,7 +212,7 @@ const ProductDetail = () => {
       await axios.post(`http://localhost:5000/api/wishlist/add`, {
         productId: id
       }, {
-        withCredentials: true // Ensure cookies are sent with request
+        withCredentials: true
       });
 
       alert('Product added to wishlist');
