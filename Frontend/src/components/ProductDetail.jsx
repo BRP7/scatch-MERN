@@ -235,7 +235,7 @@ const ProductDetail = () => {
           {/* Product Image Gallery */}
           <div className="w-full md:w-1/2 p-4 flex flex-col items-center">
             <img
-              src={product.images[0]}  // Display the first image
+              src={product.images[0]}
               alt={product.name}
               className="w-full h-auto object-cover cursor-pointer"
               style={{ maxHeight: '500px' }}
