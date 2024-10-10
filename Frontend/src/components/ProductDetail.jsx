@@ -4,12 +4,12 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { HeartIcon, ShoppingCartIcon } from '@heroicons/react/24/solid';
 import ProductImageModal from './ProductImageModal';
 
-const ProductDetail = () => {
-  const { id } = useParams();
-  const [product, setProduct] = useState(null);
-  const [error, setError] = useState('');
-  const [showModal, setShowModal] = useState(false);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+// const ProductDetail = () => {
+//   const { id } = useParams();
+//   const [product, setProduct] = useState(null);
+//   const [error, setError] = useState('');
+//   const [showModal, setShowModal] = useState(false);
+//   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
 //   useEffect(() => {
 //     const fetchProduct = async () => {
