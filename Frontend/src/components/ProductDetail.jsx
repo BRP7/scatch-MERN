@@ -158,7 +158,7 @@ import { HeartIcon, ShoppingCartIcon } from '@heroicons/react/24/solid';
 import ProductImageModal from './ProductImageModal';
 
 const ProductDetail = () => {
-  const { id } = useParams();
+  const { product_id } = useParams();
   const [product, setProduct] = useState(null);
   const [error, setError] = useState('');
   const [showModal, setShowModal] = useState(false);
